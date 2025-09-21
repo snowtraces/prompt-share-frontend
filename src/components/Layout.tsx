@@ -1,5 +1,8 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { CssBaseline, ThemeProvider, AppBar, Toolbar, Typography, Button, Box, Container, IconButton } from "@mui/material";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import MuiCssVars from "../theme/MuiCssVars";
+import { darkTheme, lightTheme } from "../theme/theme";
+import React, { useState } from "react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,45 +17,126 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate("/login");
   };
 
+  const [mode, setMode] = useState<"light" | "dark">(() => {
+    const savedMode = localStorage.getItem("themeMode");
+    if (savedMode) {
+      return savedMode === "dark" ? "dark" : "light";
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
+  });
+
+  const theme = mode === "light" ? lightTheme : darkTheme;
+
+  const handleThemeChange = () => {
+    const newMode = mode === "light" ? "dark" : "light";
+    setMode(newMode);
+    localStorage.setItem("themeMode", newMode);
+  };
+
   return (
-    
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* 顶部导航栏 */}
-      <header className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">
-          Prompt Share
-        </Link>
-
-        <nav className="space-x-4">
-          <Link to="/" className="hover:underline">
-            首页
-          </Link>
-          <Link to="/prompts" className="hover:underline">
-            提示词
-          </Link>
-          {!token ? (
-            <Link to="/login" className="hover:underline">
-              登录
-            </Link>
-          ) : (
-            <button
-              className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
-              onClick={handleLogout}
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <MuiCssVars theme={theme} />
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        {/* 顶部导航栏 */}
+        <AppBar position="static" color="primary" sx={{ boxShadow: 'none' }}>
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography
+              variant="h6"
+              component={RouterLink}
+              to="/"
+              sx={{
+                textDecoration: 'none',
+                color: 'inherit',
+                fontWeight: 'bold'
+              }}
             >
-              退出
-            </button>
-          )}
-        </nav>
-      </header>
+              Prompt Share
+            </Typography>
 
-      {/* 页面主体 */}
-      <main className="flex-1 container mx-auto px-6 py-4 flex flex-col">{children}</main>
+            <Box>
+              <Button
+                component={RouterLink}
+                to="/"
+                color="inherit"
+                sx={{ mr: 2 }}
+              >
+                首页
+              </Button>
+              <Button
+                component={RouterLink}
+                to="/prompts"
+                color="inherit"
+                sx={{ mr: 2 }}
+              >
+                提示词
+              </Button>
 
-      {/* 底部 */}
-      <footer className="bg-gray-200 text-center p-4 text-sm text-gray-600">
-        © 2025 Prompt Share. All rights reserved.
-      </footer>
-    </div>
+              <Button
+                variant="outlined"
+                onClick={handleThemeChange}
+                sx={{ mr: 2, color: 'inherit', borderColor: 'inherit' }}
+              >
+                切换到 {mode === "light" ? "Dark" : "Light"} 模式
+              </Button>
+              {!token ? (
+                <Button
+                  component={RouterLink}
+                  to="/login"
+                  variant="contained"
+                  color="secondary"
+                >
+                  登录
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleLogout}
+                >
+                  退出
+                </Button>
+              )}
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        {/* 页面主体 */}
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            py: 3,
+            bgcolor: 'background.default',
+            width: '100% !important',
+            display: 'flex',
+            justifyContent: 'center',
+            overflowY: 'auto',
+            padding: '0',
+            maxHeight: 'calc(100vh - 64px)' // 64px是顶部AppBar的高度，68px是底部footer的高度
+          }}
+        >
+          {children}
+        </Box>
+
+        {/* 底部 */}
+        {/* <Box
+          component="footer"
+          sx={{
+            bgcolor: 'background.paper',
+            py: 2,
+            textAlign: 'center',
+            mt: 'auto'
+          }}
+        >
+          <Container maxWidth="sm">
+            <Typography variant="body2" color="text.secondary">
+              © 2025 Prompt Share. All rights reserved.
+            </Typography>
+          </Container>
+        </Box> */}
+      </Box>
+    </ThemeProvider>
   );
 };
 

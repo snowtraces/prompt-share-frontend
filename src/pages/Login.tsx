@@ -1,59 +1,114 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  CircularProgress,
+  Container
+} from "@mui/material";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    setLoading(true);
+    setError("");
+
     try {
       const res = await api.post("/auth/login", { username, password });
       const token = res.data.token;
       localStorage.setItem("token", token);
-      setError("");
       navigate("/prompts");
     } catch (err) {
       setError("登录失败，请检查用户名或密码");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLogin();
     }
   };
 
   return (
-    // flex flex-col items-center justify-center flex-1 bg-gray-50
-    <div className="flex items-center justify-center flex-1 bg-gray-50">
-      <div className="bg-white shadow-md rounded p-8 w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">登录</h1>
+    <Container maxWidth="xs" sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 'calc(100vh - 64px - 64px - 48px)' // 减去头部和底部高度
+    }}>
+      <Card sx={{ minWidth: 300 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Typography component="h1" variant="h5" align="center" gutterBottom>
+            登录
+          </Typography>
 
-        {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-        )}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
-        <input
-          type="text"
-          placeholder="用户名"
-          className="border p-2 w-full mb-4 rounded"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="用户名"
+            name="username"
+            autoComplete="username"
+            autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyPress={handleKeyPress}
+            size="small"
+          />
 
-        <input
-          type="password"
-          placeholder="密码"
-          className="border p-2 w-full mb-4 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="密码"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress}
+            size="small"
+          />
 
-        <button
-          className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
-          onClick={handleLogin}
-        >
-          登录
-        </button>
-      </div>
-    </div>
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, mb: 1 }}
+            onClick={handleLogin}
+            disabled={loading}
+            size="small"
+          >
+            {loading ? <CircularProgress size={20} color="inherit" /> : '登录'}
+          </Button>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

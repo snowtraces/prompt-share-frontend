@@ -2,6 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+  /* 基础 */
+  --color-primary: #1a73e8;        /* Google Blue */
+  --color-primary-variant: #174ea6;
+  --color-secondary: #5f6368;      /* Google Gray */
+  --color-tertiary: #01875f;       /* Google Green */
+  --color-bg: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-surface-variant: #e8eaed;
+
+  /* 文本 */
+  --color-text: #202124;
+  --color-text-secondary: #5f6368;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-on-surface: #202124;
+
+  /* 功能色 */
+  --color-success: #34a853;   /* Green */
+  --color-warning: #fbbc04;   /* Yellow/Amber */
+  --color-error: #ea4335;     /* Red */
+  --color-info: #4285f4;      /* Blue */
+
+  /* 边框 & 分隔 */
+  --color-border: #dadce0;
+  --color-divider: #e0e0e0;
+
+  /* 状态 */
+  --color-hover: rgba(60,64,67,0.08);
+  --color-pressed: rgba(60,64,67,0.12);
+}
+
+.dark {
+  /* 基础 */
+  --color-primary: #8ab4f8;
+  --color-primary-variant: #174ea6;
+  --color-secondary: #9aa0a6;
+  --color-tertiary: #66bb6a;
+  --color-bg: #202124;
+  --color-surface: #303134;
+  --color-surface-variant: #3c4043;
+
+  /* 文本 */
+  --color-text: #e8eaed;
+  --color-text-secondary: #9aa0a6;
+  --color-on-primary: #202124;
+  --color-on-secondary: #202124;
+  --color-on-surface: #e8eaed;
+
+  /* 功能色 */
+  --color-success: #81c995;
+  --color-warning: #fdd663;
+  --color-error: #f28b82;
+  --color-info: #8ab4f8;
+
+  /* 边框 & 分隔 */
+  --color-border: #5f6368;
+  --color-divider: #3c4043;
+
+  /* 状态 */
+  --color-hover: rgba(232,234,237,0.08);
+  --color-pressed: rgba(232,234,237,0.12);
+}
+
+
 body {
-  @apply bg-gray-50 text-gray-900;
+  @apply bg-bg text-text;
+}
+
+@layer utilities {
+  /* For Chrome, Safari, and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* For IE, Edge, and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }

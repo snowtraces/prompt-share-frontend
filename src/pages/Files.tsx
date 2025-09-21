@@ -1,12 +1,47 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../api";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DownloadIcon from '@mui/icons-material/Download';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  IconButton,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Snackbar,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import { styled } from '@mui/material/styles';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import api from "../api";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 export default function Files() {
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
-
-  // 修复 useQuery 调用方式
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ 
+    open: false, 
+    message: '', 
+    severity: 'success' 
+  });
   const { data, isLoading } = useQuery({
     queryKey: ["files"],
     queryFn: async () => {
@@ -25,42 +60,122 @@ export default function Files() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       setFile(null);
-      alert("上传成功");
+      setSnackbar({
+        open: true,
+        message: "文件上传成功",
+        severity: 'success'
+      });
     },
+    onError: () => {
+      setSnackbar({
+        open: true,
+        message: "文件上传失败",
+        severity: 'error'
+      });
+    }
   });
 
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">文件管理</h1>
-      <div className="flex gap-2 mb-4">
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-        />
-        <button
-          onClick={() => uploadMutation.mutate()}
-          className="bg-blue-600 text-white px-3 py-1 rounded"
-        >
-          上传
-        </button>
-      </div>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        文件管理
+      </Typography>
+      
+      <Card sx={{ mb: 3 }}>
+        <CardHeader title="上传文件" />
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+            >
+              选择文件
+              <VisuallyHiddenInput 
+                type="file" 
+                onChange={(e) => setFile(e.target.files?.[0] || null)} 
+              />
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => uploadMutation.mutate()}
+              disabled={!file || uploadMutation.isPending}
+            >
+              {uploadMutation.isPending ? <CircularProgress size={24} /> : '上传'}
+            </Button>
+            {file && (
+              <Typography variant="body2" color="textSecondary">
+                已选择: {file.name}
+              </Typography>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
+
       {isLoading ? (
-        <p>加载中...</p>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+          <CircularProgress />
+        </Box>
       ) : (
-        <ul className="space-y-2">
-          {data?.map((f: any) => (
-            <li key={f.id} className="flex justify-between p-2 border rounded">
-              <span>{f.filename}</span>
-              <a
-                href={`/api/files/download/${f.id}`}
-                className="text-blue-500 hover:underline"
-              >
-                下载
-              </a>
-            </li>
-          ))}
-        </ul>
+        <Card>
+          <CardHeader title="文件列表" />
+          <CardContent>
+            {data?.length === 0 ? (
+              <Alert severity="info">暂无文件</Alert>
+            ) : (
+              <List>
+                {data?.map((f: any) => (
+                  <ListItem 
+                    key={f.id} 
+                    sx={{ 
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      mb: 1
+                    }}
+                    divider
+                  >
+                    <ListItemText 
+                      primary={f.filename} 
+                      secondary={`ID: ${f.id}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="下载文件">
+                        <IconButton 
+                          edge="end" 
+                          aria-label="download"
+                          href={`/api/files/download/${f.id}`}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </CardContent>
+        </Card>
       )}
-    </div>
+      
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity} 
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 }
