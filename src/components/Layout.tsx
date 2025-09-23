@@ -71,6 +71,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               >
                 提示词
               </Button>
+              <Button
+                component={RouterLink}
+                to="/files"
+                color="inherit"
+                sx={{ mr: 2 }}
+              >
+                文件管理
+              </Button>
 
               <Button
                 variant="outlined"

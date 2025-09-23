@@ -5,6 +5,7 @@ const api = axios.create({
   timeout: 5000,
 });
 
+
 // 请求拦截器：自动加上 token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -21,3 +22,4 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
+export const FILE_URL = "http://localhost:8080/api/files/preview/";
