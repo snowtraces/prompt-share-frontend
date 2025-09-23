@@ -64,10 +64,6 @@ const Home: React.FC = () => {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [promptImages, setPromptImages] = useState<PromptImage[]>([]);
-  // 添加图片缓存状态
-  const [promptImagesCache, setPromptImagesCache] = useState<Record<number, PromptImage[]>>({});
-
-
 
   const PROMPTS_PER_PAGE = 9;
 
@@ -134,40 +130,6 @@ const Home: React.FC = () => {
       }
     }
   }, []);
-
-  // 获取单个提示词的图片
-  const fetchPromptImages = useCallback(async (promptId: number) => {
-    // 如果已缓存，直接返回
-    if (promptImagesCache[promptId]) {
-      return promptImagesCache[promptId];
-    }
-
-    try {
-      const res = await api.get(`/prompts/${promptId}/images`);
-      const images = res.data.data || [];
-
-      // 更新缓存
-      setPromptImagesCache(prev => ({
-        ...prev,
-        [promptId]: images
-      }));
-
-      return images;
-    } catch (error) {
-      console.error(`获取提示词 ${promptId} 的图片失败:`, error);
-      return [];
-    }
-  }, [promptImagesCache]);
-
-  // 在 useEffect 中加载图片数据
-  useEffect(() => {
-    // 当提示词列表更新时，为没有图片缓存的提示词加载第一张图片
-    prompts.forEach(prompt => {
-      if (!promptImagesCache[prompt.id]) {
-        fetchPromptImages(prompt.id);
-      }
-    });
-  }, [prompts, promptImagesCache, fetchPromptImages]);
 
   // 初始加载和分页加载
   useEffect(() => {
@@ -325,7 +287,7 @@ const Home: React.FC = () => {
                     }}
                   >
                     {/* 背景图片 */}
-                    {promptImagesCache[prompt.id] && promptImagesCache[prompt.id].length > 0 && (
+                    {prompt.images && prompt.images.length > 0 && (
                       <Box
                         sx={{
                           position: 'absolute',
@@ -333,7 +295,7 @@ const Home: React.FC = () => {
                           right: 0,
                           width: '100%',  // 增加宽度
                           height: '100%',
-                          backgroundImage: `url(${FILE_URL}${promptImagesCache[prompt.id][0].file_id})`,
+                          backgroundImage: `url(${FILE_URL}${prompt.images[0].file_id})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
@@ -379,22 +341,19 @@ const Home: React.FC = () => {
 
                       {prompt.tags && renderTags(prompt.tags)}
 
-                      {(prompt.like_count !== undefined || prompt.fav_count !== undefined) && (
-                        <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                          {prompt.like_count !== undefined && (
-                            <Typography variant="body2" color="text.secondary">
-                              👍 {prompt.like_count}
-                            </Typography>
-                          )}
-                          {prompt.fav_count !== undefined && (
-                            <Typography variant="body2" color="text.secondary">
-                              💖 {prompt.fav_count}
-                            </Typography>
-                          )}
-                        </Box>
-                      )}
-
-                      <Box sx={{ mt: 'auto', pt: 1 }}>
+                      {/* 统一行显示点赞、收藏和按钮 */}
+                      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, mt: 1 }}>
+                        {prompt.like_count !== undefined && (
+                          <Typography variant="body2" color="text.secondary">
+                            👍 {prompt.like_count}
+                          </Typography>
+                        )}
+                        {prompt.fav_count !== undefined && (
+                          <Typography variant="body2" color="text.secondary">
+                            💖 {prompt.fav_count}
+                          </Typography>
+                        )}
+                        <Box sx={{ flexGrow: 1 }} />
                         <Button
                           variant="outlined"
                           size="small"
