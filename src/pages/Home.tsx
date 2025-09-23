@@ -63,7 +63,6 @@ const Home: React.FC = () => {
   // 状态管理
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [promptImages, setPromptImages] = useState<PromptImage[]>([]);
 
   const PROMPTS_PER_PAGE = 9;
 
@@ -202,15 +201,6 @@ const Home: React.FC = () => {
   const handleOpenModal = async (prompt: Prompt) => {
     setSelectedPrompt(prompt);
     setIsModalOpen(true);
-
-    // 获取该提示词的相关图片
-    try {
-      const res = await api.get(`/prompts/${prompt.id}/images`);
-      setPromptImages(res.data.data || []);
-    } catch (error) {
-      console.error("获取图片失败:", error);
-      setPromptImages([]);
-    }
   };
 
   const handleCloseModal = () => {
@@ -464,11 +454,11 @@ const Home: React.FC = () => {
               {selectedPrompt.source_tags && renderTags(selectedPrompt.source_tags)}
 
               {/* 图片展示 */}
-              {promptImages.length > 0 && (
+              {selectedPrompt.images && (
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="h6" gutterBottom>相关图片</Typography>
                   <Grid container spacing={2}>
-                    {promptImages.map(img => (
+                    {selectedPrompt.images.map(img => (
                       <Grid size={{ xs: 6, sm: 4, md: 3 }} key={img.id}>
                         <Card>
                           {img.file_url ? (
