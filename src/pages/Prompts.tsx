@@ -32,6 +32,8 @@ interface Prompt {
   source_url?: string;
   source_by?: string;
   source_tags?: string;
+    // 添加图片字段
+  images?: PromptImage[]; // 添加此行
 }
 
 // 添加图片相关类型和状态
@@ -218,14 +220,7 @@ const Home: React.FC = () => {
     setIsModalOpen(true);
     setIsEditing(false);
 
-    // 获取该提示词的相关图片
-    try {
-      const res = await api.get(`/prompts/${prompt.id}/images`);
-      setPromptImages(res.data.data || []);
-    } catch (error) {
-      console.error("获取图片失败:", error);
-      setPromptImages([]);
-    }
+    setPromptImages(prompt.images || []);
   };
 
   const handleCloseModal = () => {
@@ -291,6 +286,7 @@ const Home: React.FC = () => {
       await api.put(`/prompts/${editedPrompt.id}`, editedPrompt);
       await api.post(`/prompts/${editedPrompt.id}/images`, [...imageRelations, ...promptImages]);
       setPromptImages(prev => [...prev, ...imageRelations]);
+      editedPrompt.images = [...promptImages, ...imageRelations];
 
       // 更新本地状态
       setPrompts(prev => prev.map(p =>
