@@ -1,5 +1,8 @@
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SearchIcon from "@mui/icons-material/Search";
+import ZoomInIcon from '@mui/icons-material/ZoomIn'; // 新增
+import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Button,
@@ -47,6 +50,7 @@ interface PromptImage {
 }
 
 const Home: React.FC = () => {
+  const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [page, setPage] = useState(1);
@@ -63,6 +67,8 @@ const Home: React.FC = () => {
   // 状态管理
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // 新增：大图弹窗状态
+  const [previewImgUrl, setPreviewImgUrl] = useState<string | null>(null);
 
   const PROMPTS_PER_PAGE = 9;
 
@@ -206,6 +212,10 @@ const Home: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedPrompt(null);
+  };
+
+  const handleCopyContent = (content: string) => {
+    navigator.clipboard.writeText(content);
   };
 
   return (
@@ -397,84 +407,122 @@ const Home: React.FC = () => {
           </Box>
         </DialogTitle>
 
-        <DialogContent dividers>
+        <DialogContent dividers sx={{ p: 2 }}>
           {selectedPrompt && (
-            <Box sx={{ py: 2 }}>
-              <Typography variant="h5" gutterBottom>
+            <Box sx={{ py: 0.5 }}>
+              {/* 标题独占一行 */}
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 1 }}>
                 {selectedPrompt.title}
               </Typography>
 
-              <Typography
-                variant="body1"
-                paragraph
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  backgroundColor: 'action.hover',
-                  p: 2,
-                  borderRadius: 1
-                }}
-              >
-                {selectedPrompt.content}
-              </Typography>
-
-              {selectedPrompt.tags && renderTags(selectedPrompt.tags)}
-
-              <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                {selectedPrompt.author_name && (
-                  <Typography variant="body2" color="text.secondary">
-                    作者: {selectedPrompt.author_name}
-                  </Typography>
-                )}
-
-                {selectedPrompt.like_count !== undefined && (
-                  <Typography variant="body2" color="text.secondary">
-                    👍 {selectedPrompt.like_count}
-                  </Typography>
-                )}
-
-                {selectedPrompt.fav_count !== undefined && (
-                  <Typography variant="body2" color="text.secondary">
-                    💖 {selectedPrompt.fav_count}
-                  </Typography>
-                )}
+              {/* tags 左侧，作者/来源右侧，全部同一行展示 */}
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, gap: 1 }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  {selectedPrompt.tags && renderTags(selectedPrompt.tags)}
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
+                  {selectedPrompt.author_name && (
+                    <Typography variant="caption" color="primary" sx={{ whiteSpace: 'nowrap' }}>
+                      作者: {selectedPrompt.author_name}
+                    </Typography>
+                  )}
+                  {selectedPrompt.source_by && (
+                    <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+                      来源: {selectedPrompt.source_url ?
+                        <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</a>
+                        : <span>{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</span>
+                      }
+                    </Typography>
+                  )}
+                </Box>
               </Box>
-
-              {selectedPrompt.source_url && (
-                <Typography variant="body2" paragraph>
-                  来源地址: <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_url}</a>
+              
+              {/* 主内容更紧凑 */}
+              <Box sx={{ position: 'relative', display: 'flex', alignItems: 'flex-start', mb: 1 }}>
+                <Typography
+                  variant="body2"
+                  paragraph
+                  sx={{
+                    whiteSpace: 'pre-wrap',
+                    backgroundColor: 'action.hover',
+                    p: 1.5,
+                    borderRadius: 1,
+                    fontSize: '0.98rem',
+                    flex: 1,
+                    mb: 0
+                  }}
+                >
+                  {selectedPrompt.content}
                 </Typography>
-              )}
-
-              {selectedPrompt.source_by && (
-                <Typography variant="body2" paragraph>
-                  来源人: {selectedPrompt.source_by}
-                </Typography>
-              )}
-
-              {selectedPrompt.source_tags && renderTags(selectedPrompt.source_tags)}
-
-              {/* 图片展示 */}
-              {selectedPrompt.images && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="h6" gutterBottom>相关图片</Typography>
-                  <Grid container spacing={2}>
+                {/* 悬浮复制按钮，适配深色模式 */}
+                <IconButton
+                  aria-label="复制内容"
+                  onClick={() => handleCopyContent(selectedPrompt.content)}
+                  sx={{
+                    position: 'absolute',
+                    right: 8,
+                    bottom: 8,
+                    background: theme.palette.mode === 'dark'
+                      ? theme.palette.background.paper
+                      : 'rgba(255,255,255,0.85)',
+                    color: theme.palette.text.primary,
+                    boxShadow: 1,
+                    '&:hover': {
+                      background: theme.palette.mode === 'dark'
+                        ? theme.palette.action.hover
+                        : 'rgba(230,230,230,1)'
+                    },
+                    zIndex: 2
+                  }}
+                  size="small"
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Box>
+              
+              {/* 相关图片更紧凑 */}
+              {selectedPrompt.images && selectedPrompt.images.length > 0 && (
+                <Box sx={{ mt: 1, mb: 1 }}>
+                  <Typography variant="subtitle2" gutterBottom sx={{ mb: 0.5 }}>效果图片</Typography>
+                  <Grid container spacing={1}>
                     {selectedPrompt.images.map(img => (
                       <Grid size={{ xs: 6, sm: 4, md: 3 }} key={img.id}>
-                        <Card>
+                        <Card sx={{ position: 'relative' }}>
                           {img.file_url ? (
                             <>
                               <img
                                 src={PREVIEW_URL + img.file_id}
                                 alt={img.tags || "Prompt image"}
-                                style={{ width: '100%', height: 'auto' }}
+                                style={{
+                                  height: 110,
+                                  width: '100%',
+                                  objectFit: 'cover',
+                                  borderRadius: 3,
+                                  display: 'block'
+                                }}
                               />
-                              <CardContent>
-                                <Typography variant="body2">{img.tags}</Typography>
+                              <IconButton
+                                sx={{
+                                  position: 'absolute',
+                                  right: 4,
+                                  bottom: 4,
+                                  background: 'rgba(0,0,0,0.4)',
+                                  color: '#fff',
+                                  '&:hover': { background: 'rgba(0,0,0,0.6)' },
+                                  zIndex: 2
+                                }}
+                                size="small"
+                                onClick={() => setPreviewImgUrl(PREVIEW_URL + img.file_id)}
+                              >
+                                <ZoomInIcon fontSize="small" />
+                              </IconButton>
+                              <CardContent sx={{ p: 0.5, pb: '4px !important' }}>
+                                <Typography variant="caption" noWrap sx={{ pb: 0 }}>{img.tags}</Typography>
                               </CardContent>
                             </>
                           ) : (
-                            <CardContent>
-                              <Typography variant="body2">{img.tags}</Typography>
+                            <CardContent sx={{ p: 0.5 }}>
+                              <Typography variant="caption">{img.tags}</Typography>
                               <Typography variant="caption" color="text.secondary">
                                 图片URL未提供
                               </Typography>
@@ -486,6 +534,20 @@ const Home: React.FC = () => {
                   </Grid>
                 </Box>
               )}
+
+              {/* 点赞/收藏等操作，底部居中展示 */}
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 1 }}>
+                {selectedPrompt.like_count !== undefined && (
+                  <Typography variant="caption" color="text.secondary">
+                    👍 {selectedPrompt.like_count}
+                  </Typography>
+                )}
+                {selectedPrompt.fav_count !== undefined && (
+                  <Typography variant="caption" color="text.secondary">
+                    💖 {selectedPrompt.fav_count}
+                  </Typography>
+                )}
+              </Box>
             </Box>
           )}
         </DialogContent>
@@ -493,6 +555,29 @@ const Home: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseModal}>关闭</Button>
         </DialogActions>
+      </Dialog>
+
+      {/* 大图预览弹窗 */}
+      <Dialog
+        open={!!previewImgUrl}
+        onClose={() => setPreviewImgUrl(null)}
+        maxWidth="lg"
+      >
+        <Box sx={{ position: 'relative', bgcolor: '#000' }}>
+          <IconButton
+            onClick={() => setPreviewImgUrl(null)}
+            sx={{ position: 'absolute', top: 8, right: 8, color: '#fff', zIndex: 2 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          {previewImgUrl && (
+            <img
+              src={previewImgUrl}
+              alt="大图预览"
+              style={{ maxWidth: '90vw', maxHeight: '80vh', display: 'block', margin: '0' }}
+            />
+          )}
+        </Box>
       </Dialog>
     </Box>
   );
