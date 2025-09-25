@@ -17,7 +17,7 @@ import {
   Typography
 } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import api, { FILE_URL } from "../api";
+import api, { PREVIEW_URL, THUMBNAIL_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
 
 interface Prompt {
@@ -285,7 +285,7 @@ const Home: React.FC = () => {
                           right: 0,
                           width: '100%',  // 增加宽度
                           height: '100%',
-                          backgroundImage: `url(${FILE_URL}${prompt.images[0].file_id})`,
+                          backgroundImage: `url(${THUMBNAIL_URL}${prompt.images[0].file_id})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
@@ -464,7 +464,7 @@ const Home: React.FC = () => {
                           {img.file_url ? (
                             <>
                               <img
-                                src={FILE_URL + img.file_id}
+                                src={PREVIEW_URL + img.file_id}
                                 alt={img.tags || "Prompt image"}
                                 style={{ width: '100%', height: 'auto' }}
                               />

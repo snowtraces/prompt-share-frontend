@@ -22,4 +22,5 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
-export const FILE_URL = "http://localhost:8080/api/files/preview/";
+export const PREVIEW_URL = "http://localhost:8080/api/files/preview/";
+export const THUMBNAIL_URL = "http://localhost:8080/api/files/thumbnail/";
