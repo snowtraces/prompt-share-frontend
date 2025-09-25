@@ -26,9 +26,13 @@ const Login: React.FC = () => {
 
     try {
       const res = await api.post("/auth/login", { username, password });
-      const token = res.data.token;
-      localStorage.setItem("token", token);
-      navigate("/prompts");
+      // 兼容后端返回格式
+      if (res.data.code === 0 && res.data.data.token) {
+        localStorage.setItem("token", res.data.data.token);
+        navigate("/prompts");
+      } else {
+        setError(res.data.message || "登录失败，请检查用户名或密码");
+      }
     } catch (err) {
       setError("登录失败，请检查用户名或密码");
     } finally {

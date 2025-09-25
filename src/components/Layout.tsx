@@ -1,8 +1,8 @@
-import { CssBaseline, ThemeProvider, AppBar, Toolbar, Typography, Button, Box, Container, IconButton } from "@mui/material";
+import { AppBar, Box, Button, CssBaseline, ThemeProvider, Toolbar, Typography } from "@mui/material";
+import React, { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import MuiCssVars from "../theme/MuiCssVars";
 import { darkTheme, lightTheme } from "../theme/theme";
-import React, { useState } from "react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -63,23 +63,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               >
                 首页
               </Button>
-              <Button
-                component={RouterLink}
-                to="/prompts"
-                color="inherit"
-                sx={{ mr: 2 }}
-              >
-                提示词
-              </Button>
-              <Button
-                component={RouterLink}
-                to="/files"
-                color="inherit"
-                sx={{ mr: 2 }}
-              >
-                文件管理
-              </Button>
-
+              {token && (
+                <>
+                  <Button
+                    component={RouterLink}
+                    to="/prompts"
+                    color="inherit"
+                    sx={{ mr: 2 }}
+                  >
+                    提示词
+                  </Button>
+                  <Button
+                    component={RouterLink}
+                    to="/files"
+                    color="inherit"
+                    sx={{ mr: 2 }}
+                  >
+                    文件管理
+                  </Button>
+                </>
+              )}
               <Button
                 variant="outlined"
                 onClick={handleThemeChange}

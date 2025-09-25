@@ -5,7 +5,6 @@ const api = axios.create({
   timeout: 5000,
 });
 
-
 // 请求拦截器：自动加上 token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -20,6 +19,19 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// 响应拦截器：捕获 401 错误并提示用户
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response && error.response.status === 401) {
+      alert("登录已过期，请重新登录。");
+      // 可选：跳转到登录页
+      // window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;
 export const PREVIEW_URL = "http://localhost:8080/api/files/preview/";
