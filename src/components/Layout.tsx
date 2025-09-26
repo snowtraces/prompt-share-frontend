@@ -1,14 +1,14 @@
 import { AppBar, Box, Button, CssBaseline, ThemeProvider, Toolbar, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Outlet, Link as RouterLink, useNavigate } from "react-router-dom";
 import MuiCssVars from "../theme/MuiCssVars";
 import { darkTheme, lightTheme } from "../theme/theme";
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -124,10 +124,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             justifyContent: 'center',
             overflowY: 'auto',
             padding: '0',
-            maxHeight: 'calc(100vh - 64px)' // 64px是顶部AppBar的高度，68px是底部footer的高度
+            maxHeight: 'calc(100vh - 64px)'
           }}
         >
-          {children}
+          <Outlet /> {/* 用于渲染子路由内容 */}
         </Box>
 
         {/* 底部 */}

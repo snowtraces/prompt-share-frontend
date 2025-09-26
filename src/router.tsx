@@ -1,23 +1,36 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import Layout from "./components/Layout";
-
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Prompts from "./pages/Prompts";
 import Files from "./pages/Files";
 
+const router = createBrowserRouter(
+  [
+    {
+      element: <Layout />,
+      children: [
+        { path: "/", element: <Home /> },
+        { path: "/login", element: <Login /> },
+        { path: "/prompts", element: <Prompts /> },
+        { path: "/files", element: <Files /> },
+      ],
+    },
+  ],
+  {
+    future: {
+      v7_startTransition: true,
+    },
+  }
+);
+
 const AppRouter: React.FC = () => {
-  return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/prompts" element={<Prompts />} />
-        <Route path="/files" element={<Files />} />
-      </Routes>
-    </Layout>
-  );
+  console.log("AppRouter is rendering"); // 调试日志
+  return <RouterProvider router={router} />;
 };
 
 export default AppRouter;
