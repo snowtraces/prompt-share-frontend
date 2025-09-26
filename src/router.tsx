@@ -29,7 +29,6 @@ const router = createBrowserRouter(
 );
 
 const AppRouter: React.FC = () => {
-  console.log("AppRouter is rendering"); // 调试日志
   return <RouterProvider router={router} />;
 };
 
