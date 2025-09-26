@@ -9,6 +9,9 @@ import {
   CardContent,
   CardHeader,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   Snackbar,
@@ -18,7 +21,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from "react";
-import api from "../api";
+import api, { PREVIEW_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
 // 在文件顶部导入更多图标
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -63,6 +66,7 @@ export default function Files() {
     message: '',
     severity: 'success'
   });
+  const [previewFile, setPreviewFile] = useState<LocalFile | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const cancelTokenRef = useRef<any>(null);
@@ -194,6 +198,40 @@ export default function Files() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // 获取文件预览URL
+  const getPreviewUrl = (f: LocalFile) => PREVIEW_URL + `${f.id}`;
+
+  // 渲染预览内容
+  const renderPreviewContent = (f: LocalFile) => {
+    if (!f) return null;
+    const url = getPreviewUrl(f);
+    if (f.type.startsWith('image/')) {
+      return <img src={url} alt={f.name} style={{ maxWidth: '100%', maxHeight: 500 }} />;
+    }
+    if (f.type === 'application/pdf') {
+      return <iframe src={url} title={f.name} width="100%" height={500} style={{ border: 0 }} />;
+    }
+    if (f.type.startsWith('audio/')) {
+      return <audio src={url} controls style={{ width: '100%' }} />;
+    }
+    if (f.type.startsWith('video/')) {
+      return <video src={url} controls style={{ maxWidth: '100%', maxHeight: 500 }} />;
+    }
+    if (f.type.startsWith('text/') || f.type === 'application/json') {
+      // 简单文本预览
+      return (
+        <iframe
+          src={url}
+          title={f.name}
+          width="100%"
+          height={400}
+          style={{ border: 0, background: '#f5f5f5' }}
+        />
+      );
+    }
+    return <Typography color="textSecondary">暂不支持该类型文件预览</Typography>;
+  };
+
   return (
     <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box sx={{ width: '100%', maxWidth: 'lg' }}>
@@ -277,15 +315,26 @@ export default function Files() {
                             {f.name}
                           </Typography>
                         </Tooltip>
-                        <Tooltip title="下载文件">
-                          <IconButton
-                            aria-label="download"
-                            href={`/api/files/download/${f.id}`}
-                            size="small"
-                          >
-                            <DownloadIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                        <Box>
+                          <Tooltip title="预览文件">
+                            <IconButton
+                              aria-label="preview"
+                              size="small"
+                              onClick={() => setPreviewFile(f)}
+                            >
+                              <InsertDriveFileIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="下载文件">
+                            <IconButton
+                              aria-label="download"
+                              href={`/api/files/download/${f.id}`}
+                              size="small"
+                            >
+                              <DownloadIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
                       </Box>
 
                       <Grid container spacing={0.5} sx={{ fontSize: '0.875rem' }}>
@@ -355,6 +404,21 @@ export default function Files() {
                 <Typography color="textSecondary" variant="body2">没有更多文件了</Typography>
               </Box>
             )}
+
+            {/* 预览弹窗 */}
+            <Dialog
+              open={!!previewFile}
+              onClose={() => setPreviewFile(null)}
+              maxWidth="md"
+              fullWidth
+            >
+              <DialogTitle>
+                文件预览：{previewFile?.name}
+              </DialogTitle>
+              <DialogContent dividers>
+                {previewFile && renderPreviewContent(previewFile)}
+              </DialogContent>
+            </Dialog>
           </>
         ) : (
           <Alert severity="info">暂无文件</Alert>
