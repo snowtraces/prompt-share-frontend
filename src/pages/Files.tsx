@@ -67,7 +67,6 @@ export default function Files() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const cancelTokenRef = useRef<any>(null);
   const requestedPagesRef = useRef<Set<number>>(new Set());
-  const prevSearchTermRef = useRef<string>("");
 
   const FILES_PER_PAGE = 9;
 
@@ -102,7 +101,7 @@ export default function Files() {
         requestedPagesRef.current.add(pageNum);
       }
 
-      const res = await api.get(`/files?page=${pageNum}&limit=${FILES_PER_PAGE}`);
+      const res = await api.get(`/files?page=${pageNum}&size=${FILES_PER_PAGE}`);
       const data = res.data as ApiResponse<PaginatedResponse<LocalFile>>;
       const newFiles = data.data.list;
 
