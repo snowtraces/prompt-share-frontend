@@ -67,3 +67,5 @@ export default defineConfig([
   },
 ])
 ```
+
+npm i --save-dev @types/node

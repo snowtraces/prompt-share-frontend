@@ -58,7 +58,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const searchTimeoutRef = useRef<number | null>(null);
+  const searchTimeoutRef = useRef<any>(null);
   const cancelTokenRef = useRef<any>(null);
   const requestedPagesRef = useRef<Set<number>>(new Set());
   const prevSearchTermRef = useRef<string>("");

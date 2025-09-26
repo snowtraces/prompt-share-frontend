@@ -1,7 +1,7 @@
 import axios, { AxiosHeaders } from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api", // 确认后端监听的地址
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
   timeout: 5000,
 });
 
@@ -34,5 +34,5 @@ api.interceptors.response.use(
 );
 
 export default api;
-export const PREVIEW_URL = "http://localhost:8080/api/files/preview/";
-export const THUMBNAIL_URL = "http://localhost:8080/api/files/thumbnail/";
+export const PREVIEW_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api") + "/files/preview/";
+export const THUMBNAIL_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api") + "/files/thumbnail/";

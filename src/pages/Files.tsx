@@ -27,6 +27,7 @@ import type { ApiResponse, PaginatedResponse } from "../types";
 import ArchiveIcon from '@mui/icons-material/Archive';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import CodeIcon from '@mui/icons-material/Code';
+import DeleteIcon from '@mui/icons-material/Delete';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ImageIcon from '@mui/icons-material/Image';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
@@ -67,6 +68,7 @@ export default function Files() {
     severity: 'success'
   });
   const [previewFile, setPreviewFile] = useState<LocalFile | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const cancelTokenRef = useRef<any>(null);
@@ -182,6 +184,30 @@ export default function Files() {
         message: "文件上传失败",
         severity: 'error'
       });
+    }
+  });
+
+  // 删除文件的 mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await api.delete(`/files/${id}`);
+    },
+    onSuccess: (_, id) => {
+      setFiles(prev => prev.filter(f => f.id !== id));
+      setSnackbar({
+        open: true,
+        message:  "文件删除成功",
+        severity: 'success'
+      });
+      setDeletingId(null);
+    },
+    onError: (error: any) => {
+      setSnackbar({
+        open: true,
+        message: error?.response?.data?.message || "文件删除失败",
+        severity: 'error'
+      });
+      setDeletingId(null);
     }
   });
 
@@ -333,6 +359,26 @@ export default function Files() {
                             >
                               <DownloadIcon fontSize="small" />
                             </IconButton>
+                          </Tooltip>
+                          <Tooltip title="删除文件">
+                            <span>
+                              <IconButton
+                                aria-label="delete"
+                                size="small"
+                                color="error"
+                                disabled={deleteMutation.isPending && deletingId === f.id}
+                                onClick={() => {
+                                  setDeletingId(f.id);
+                                  deleteMutation.mutate(f.id);
+                                }}
+                              >
+                                {deleteMutation.isPending && deletingId === f.id ? (
+                                  <CircularProgress size={18} />
+                                ) : (
+                                  <DeleteIcon fontSize="small" />
+                                )}
+                              </IconButton>
+                            </span>
                           </Tooltip>
                         </Box>
                       </Box>
