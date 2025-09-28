@@ -1,8 +1,14 @@
-import { AppBar, Box, Button, CssBaseline, ThemeProvider, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, CssBaseline, IconButton, ThemeProvider, Toolbar, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Outlet, Link as RouterLink, useNavigate } from "react-router-dom";
 import MuiCssVars from "../theme/MuiCssVars";
 import { darkTheme, lightTheme } from "../theme/theme";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import HomeIcon from '@mui/icons-material/Home';
+
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -41,28 +47,36 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
         {/* 顶部导航栏 */}
         <AppBar position="static" color="primary" sx={{ boxShadow: 'none' }}>
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography
-              variant="h6"
+            <Box
               component={RouterLink}
               to="/"
               sx={{
                 textDecoration: 'none',
                 color: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
                 fontWeight: 'bold'
               }}
             >
-              Prompt Share
-            </Typography>
+              <img
+                src="/icon.png"
+                alt="Prompt Share Logo"
+                style={{ height: '40px', marginRight: '10px' }}
+              />
+              <Typography variant="h6" component="div">
+                Prompt Share
+              </Typography>
+            </Box>
 
             <Box>
-              <Button
+              <IconButton
                 component={RouterLink}
                 to="/"
-                color="inherit"
-                sx={{ mr: 2 }}
+                sx={{ mr: 2, color: 'inherit' }}
+                aria-label="home"
               >
-                首页
-              </Button>
+                <HomeIcon />
+              </IconButton>
               {token && (
                 <>
                   <Button
@@ -83,30 +97,30 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                   </Button>
                 </>
               )}
-              <Button
-                variant="outlined"
+              <IconButton
                 onClick={handleThemeChange}
-                sx={{ mr: 2, color: 'inherit', borderColor: 'inherit' }}
+                sx={{ mr: 2, color: 'inherit' }}
+                aria-label="toggle theme"
               >
-                切换到 {mode === "light" ? "Dark" : "Light"} 模式
-              </Button>
+                {mode === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
+              </IconButton>
               {!token ? (
-                <Button
+                <IconButton
                   component={RouterLink}
                   to="/login"
-                  variant="contained"
-                  color="secondary"
+                  sx={{ color: 'inherit' }}
+                  aria-label="login"
                 >
-                  登录
-                </Button>
+                  <LoginIcon />
+                </IconButton>
               ) : (
-                <Button
-                  variant="contained"
-                  color="error"
+                <IconButton
+                  sx={{ color: 'inherit' }}
+                  aria-label="logout"
                   onClick={handleLogout}
                 >
-                  退出
-                </Button>
+                  <LogoutIcon />
+                </IconButton>
               )}
             </Box>
           </Toolbar>

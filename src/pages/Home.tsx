@@ -240,7 +240,7 @@ const Home: React.FC = () => {
           zIndex: 100,
           backgroundColor: 'background.default',
           paddingTop: 2,
-          paddingBottom: 2
+          paddingBottom: 2,
         }}
       >
         <TextField
