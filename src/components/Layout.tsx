@@ -1,13 +1,14 @@
 import { AppBar, Box, Button, CssBaseline, IconButton, ThemeProvider, Toolbar, Typography } from "@mui/material";
+
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import HomeIcon from '@mui/icons-material/Home';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import React, { useState } from "react";
 import { Outlet, Link as RouterLink, useNavigate } from "react-router-dom";
 import MuiCssVars from "../theme/MuiCssVars";
 import { darkTheme, lightTheme } from "../theme/theme";
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import HomeIcon from '@mui/icons-material/Home';
 
 
 interface LayoutProps {
@@ -63,7 +64,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                 alt="Prompt Share Logo"
                 style={{ height: '40px', marginRight: '10px' }}
               />
-              <Typography variant="h6" component="div">
+              <Typography variant="h6" component="div"  sx={{ display: { xs: 'none', sm: 'block' } }}>
                 Prompt Share
               </Typography>
             </Box>

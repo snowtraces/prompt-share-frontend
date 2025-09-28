@@ -1,8 +1,15 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), visualizer({
+    filename: "dist/stats.html",
+    open: true,
+    gzipSize: true,
+    brotliSize: true,
+  })],
+
   server: {
     port: 5173,
     proxy: {
@@ -13,4 +20,15 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
+          icons: ['@mui/icons-material']
+        }
+      }
+    }
+  }
 });

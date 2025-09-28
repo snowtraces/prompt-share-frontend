@@ -69,3 +69,5 @@ export default defineConfig([
 ```
 
 npm i --save-dev @types/node
+
+npm install --save-dev rollup-plugin-visualizer
