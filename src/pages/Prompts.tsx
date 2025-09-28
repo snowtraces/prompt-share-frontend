@@ -394,11 +394,12 @@ const Home: React.FC = () => {
       }
       // 保存提示词信息（包括新增字段）
       await api.put(`/prompts/${editedPrompt.id}`, editedPrompt);
-      if (imageRelations.length > 0 || promptImages.length > 0) {
-        await api.post(`/prompts/${editedPrompt.id}/images`, [...imageRelations, ...promptImages]);
+      const allImages = [...promptImages, ...imageRelations]
+      if (allImages.length > 0) {
+        await api.post(`/prompts/${editedPrompt.id}/images`, allImages);
       }
-      setPromptImages(prev => [...prev, ...imageRelations]);
-      editedPrompt.images = [...promptImages, ...imageRelations];
+      setPromptImages(allImages);
+      editedPrompt.images = allImages;
 
       // 更新本地状态
       setPrompts(prev => prev.map(p =>
@@ -407,7 +408,7 @@ const Home: React.FC = () => {
 
       // 如果当前选中的也是这个prompt，也需要更新
       if (selectedPrompt && selectedPrompt.id === editedPrompt.id) {
-        setSelectedPrompt(editedPrompt);
+        setSelectedPrompt({...editedPrompt});
       }
 
       setIsEditing(false);
