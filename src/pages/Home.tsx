@@ -299,10 +299,10 @@ const Home: React.FC = () => {
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
-                          opacity: 0.3,  // 稍微增加透明度
+                          opacity: 0.8,  // 稍微增加透明度
                           zIndex: 0,
-                          // 添加渐变遮罩实现左边虚化淡入效果
-                          maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%)',
+                             // 添加渐变遮罩实现左上角虚化淡入效果
+                          maskImage: 'linear-gradient(to left top, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%)',
                         }}
                       />
                     )}
@@ -314,7 +314,11 @@ const Home: React.FC = () => {
                         zIndex: 1
                       }}
                     >
-                      <Typography variant="h6" component="h3" gutterBottom>
+                      <Typography variant="h6" component="h3" gutterBottom
+                        sx={{
+                          textShadow: (theme) => `0px 0px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)'}`,
+                        }}
+                      >
                         {prompt.title}
                       </Typography>
 
@@ -359,6 +363,18 @@ const Home: React.FC = () => {
                           size="small"
                           color="primary"
                           onClick={() => handleOpenModal(prompt)}
+                          sx={{
+                            boxShadow: (theme) =>
+                              theme.palette.mode === 'dark'
+                                ? '1px 1px 2px rgba(0, 0, 0, 0.3)'
+                                : '1px 1px 2px rgba(255, 255, 255, 0.3)',
+                            '&:hover': {
+                              boxShadow: (theme) =>
+                                theme.palette.mode === 'dark'
+                                  ? '1px 1px 4px rgba(0, 0, 0, 0.3)'
+                                  : '1px 1px 4px rgba(255, 255, 255, 0.3)',
+                            }
+                          }}
                         >
                           查看详情
                         </Button>
@@ -436,7 +452,7 @@ const Home: React.FC = () => {
                   )}
                 </Box>
               </Box>
-              
+
               {/* 主内容更紧凑 */}
               <Box sx={{ position: 'relative', display: 'flex', alignItems: 'flex-start', mb: 1 }}>
                 <Typography
@@ -479,7 +495,7 @@ const Home: React.FC = () => {
                   <ContentCopyIcon fontSize="small" />
                 </IconButton>
               </Box>
-              
+
               {/* 相关图片更紧凑 */}
               {selectedPrompt.images && selectedPrompt.images.length > 0 && (
                 <Box sx={{ mt: 1, mb: 1 }}>
