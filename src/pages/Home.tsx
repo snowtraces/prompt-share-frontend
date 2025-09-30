@@ -507,7 +507,7 @@ const Home: React.FC = () => {
                           {img.file_url ? (
                             <>
                               <img
-                                src={PREVIEW_URL + img.file_id}
+                                src={THUMBNAIL_URL + img.file_id}
                                 alt={img.tags || "Prompt image"}
                                 style={{
                                   height: 110,
