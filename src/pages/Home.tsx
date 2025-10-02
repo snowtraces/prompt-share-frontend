@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   Chip,
+  colors,
   Dialog,
   DialogActions,
   DialogContent,
@@ -286,6 +287,7 @@ const Home: React.FC = () => {
                       position: 'relative',
                       overflow: 'hidden',
                       borderRadius: 3,
+                      padding: 0,
                     }}
                   >
                     {/* 背景图片 */}
@@ -303,7 +305,7 @@ const Home: React.FC = () => {
                           backgroundRepeat: 'no-repeat',
                           opacity: 1,
                           zIndex: 0,
-                          maskImage: 'linear-gradient(to left top, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%)',
+                          maskImage: 'linear-gradient(to left bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%)',
                         }}
                       />
                     )}
@@ -314,51 +316,20 @@ const Home: React.FC = () => {
                         position: 'relative',
                         zIndex: 1,
                         display: 'flex',
-                        flexDirection: 'column'
+                        flexDirection: 'column',
+                        padding: 0,
+                        '&:last-child': {
+                          pb: 0,
+                        },
                       }}
                     >
-                      <Box sx={{ mb: 1 }}>
-                        <Typography
-                          variant="h6"
-                          component="h3"
-                          gutterBottom
-                          sx={{
-                            fontWeight: 600,
-                            lineHeight: 1.3,
-                            mb: 1
-                          }}
-                        >
-                          {prompt.title}
-                        </Typography>
-
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            mb: 2,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            flexGrow: 1
-                          }}
-                        >
-                          {prompt.content}
-                        </Typography>
-                      </Box>
 
                       {/* 新增信息显示 */}
-                      <Box sx={{ mt: 'auto' }}>
-                        {prompt.author_name && (
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                            作者: {prompt.author_name}
-                          </Typography>
-                        )}
-
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mt: 16, px: 2 }}>
                         {prompt.tags && renderTags(prompt.tags)}
 
                         {/* 统一行显示点赞、收藏和按钮 */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
                           <Box sx={{ display: 'flex', gap: 1.5 }}>
                             {prompt.like_count !== undefined && (
                               <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -374,34 +345,62 @@ const Home: React.FC = () => {
 
                           <Box sx={{ flexGrow: 1 }} />
 
-                          <Button
-                            variant="text"
-                            size="small"
-                            color="primary"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenModal(prompt);
-                            }}
-                            sx={{
-                              minWidth: 'auto',
-                              padding: '0px 8px',
-                              textTransform: 'none',
-                              fontWeight: 500,
-                              fontSize: '0.8rem',
-                              borderRadius: 0.85,
-                              visibility: 'hidden',
-                              '.MuiCard-root:hover &': {
-                                visibility: 'visible',
-                              },
-                              '&:hover': {
-                                backgroundColor: 'action.hover'
-                              }
-                            }}
-                          >
-                            查看
-                          </Button>
                         </Box>
                       </Box>
+
+                      <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        px: 2,
+                        mt: 1,
+                        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                      }}>
+                        <Typography
+                          variant="h6"
+                          component="h3"
+                          gutterBottom
+                          sx={{
+                            fontWeight: 600,
+                            lineHeight: 1.3,
+                            mb: 0,
+                            flex: 1,
+                            py: 1,
+                          }}
+                        >
+                          {prompt.title}
+                        </Typography>
+                        <Button
+                          variant="text"
+                          size="small"
+                          color="primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenModal(prompt);
+                          }}
+                          sx={{
+                            minWidth: 'auto',
+                            padding: '0px 8px',
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            fontSize: '0.8rem',
+                            borderRadius: 0.85,
+                            visibility: 'hidden',
+                            '.MuiCard-root:hover &': {
+                              visibility: 'visible',
+                            },
+                            '&:hover': {
+                              backgroundColor: 'action.hover'
+                            },
+                            flexShrink: 0,
+                            alignSelf: 'flex-start',
+                            mt: 1,
+                          }}
+                        >
+                          查看
+                        </Button>
+                      </Box>
+
                     </CardContent>
                   </Card>
 
@@ -428,11 +427,12 @@ const Home: React.FC = () => {
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography color="text.secondary">没有找到相关提示词</Typography>
           </Box>
-        )}
-      </Box>
+        )
+        }
+      </Box >
 
       {/* 弹窗组件 */}
-      <Dialog
+      < Dialog
         open={isModalOpen}
         onClose={handleCloseModal}
         maxWidth="md"
@@ -595,10 +595,10 @@ const Home: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseModal}>关闭</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog >
 
       {/* 大图预览弹窗 */}
-      <Dialog
+      < Dialog
         open={!!previewImgUrl}
         onClose={() => setPreviewImgUrl(null)}
         maxWidth="lg"
@@ -618,8 +618,8 @@ const Home: React.FC = () => {
             />
           )}
         </Box>
-      </Dialog>
-    </Box>
+      </Dialog >
+    </Box >
   );
 };
 
