@@ -299,9 +299,9 @@ const Home: React.FC = () => {
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
-                          opacity: 0.8,  // 稍微增加透明度
+                          opacity: 1,  // 稍微增加透明度
                           zIndex: 0,
-                             // 添加渐变遮罩实现左上角虚化淡入效果
+                          // 添加渐变遮罩实现左上角虚化淡入效果
                           maskImage: 'linear-gradient(to left top, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%)',
                         }}
                       />
