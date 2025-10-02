@@ -278,12 +278,14 @@ const Home: React.FC = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      transition: 'box-shadow 0.3s',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
                       '&:hover': {
-                        boxShadow: 4,
+                        transform: 'translateY(-4px)',
+                        boxShadow: 6,
                       },
                       position: 'relative',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      borderRadius: 3,
                     }}
                   >
                     {/* 背景图片 */}
@@ -293,15 +295,14 @@ const Home: React.FC = () => {
                           position: 'absolute',
                           top: 0,
                           right: 0,
-                          width: '100%',  // 增加宽度
+                          width: '100%',
                           height: '100%',
                           backgroundImage: `url(${THUMBNAIL_URL}${prompt.images[0].file_id})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
-                          opacity: 1,  // 稍微增加透明度
+                          opacity: 1,
                           zIndex: 0,
-                          // 添加渐变遮罩实现左上角虚化淡入效果
                           maskImage: 'linear-gradient(to left top, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%)',
                         }}
                       />
@@ -311,76 +312,99 @@ const Home: React.FC = () => {
                       sx={{
                         flexGrow: 1,
                         position: 'relative',
-                        zIndex: 1
+                        zIndex: 1,
+                        display: 'flex',
+                        flexDirection: 'column'
                       }}
                     >
-                      <Typography variant="h6" component="h3" gutterBottom
-                        sx={{
-                          textShadow: (theme) => `0px 0px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)'}`,
-                        }}
-                      >
-                        {prompt.title}
-                      </Typography>
-
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          mb: 2,
-                          display: '-webkit-box',
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        {prompt.content}
-                      </Typography>
-
-                      {/* 新增信息显示 */}
-                      {prompt.author_name && (
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                          作者: {prompt.author_name}
-                        </Typography>
-                      )}
-
-                      {prompt.tags && renderTags(prompt.tags)}
-
-                      {/* 统一行显示点赞、收藏和按钮 */}
-                      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, mt: 1 }}>
-                        {prompt.like_count !== undefined && (
-                          <Typography variant="body2" color="text.secondary">
-                            👍 {prompt.like_count}
-                          </Typography>
-                        )}
-                        {prompt.fav_count !== undefined && (
-                          <Typography variant="body2" color="text.secondary">
-                            💖 {prompt.fav_count}
-                          </Typography>
-                        )}
-                        <Box sx={{ flexGrow: 1 }} />
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          color="primary"
-                          onClick={() => handleOpenModal(prompt)}
+                      <Box sx={{ mb: 1 }}>
+                        <Typography
+                          variant="h6"
+                          component="h3"
+                          gutterBottom
                           sx={{
-                            boxShadow: (theme) =>
-                              theme.palette.mode === 'dark'
-                                ? '1px 1px 2px rgba(0, 0, 0, 0.3)'
-                                : '1px 1px 2px rgba(255, 255, 255, 0.3)',
-                            '&:hover': {
-                              boxShadow: (theme) =>
-                                theme.palette.mode === 'dark'
-                                  ? '1px 1px 4px rgba(0, 0, 0, 0.3)'
-                                  : '1px 1px 4px rgba(255, 255, 255, 0.3)',
-                            }
+                            fontWeight: 600,
+                            lineHeight: 1.3,
+                            mb: 1
                           }}
                         >
-                          查看详情
-                        </Button>
+                          {prompt.title}
+                        </Typography>
+
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            mb: 2,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            flexGrow: 1
+                          }}
+                        >
+                          {prompt.content}
+                        </Typography>
+                      </Box>
+
+                      {/* 新增信息显示 */}
+                      <Box sx={{ mt: 'auto' }}>
+                        {prompt.author_name && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            作者: {prompt.author_name}
+                          </Typography>
+                        )}
+
+                        {prompt.tags && renderTags(prompt.tags)}
+
+                        {/* 统一行显示点赞、收藏和按钮 */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
+                          <Box sx={{ display: 'flex', gap: 1.5 }}>
+                            {prompt.like_count !== undefined && (
+                              <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                👍 {prompt.like_count}
+                              </Typography>
+                            )}
+                            {prompt.fav_count !== undefined && (
+                              <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                💖 {prompt.fav_count}
+                              </Typography>
+                            )}
+                          </Box>
+
+                          <Box sx={{ flexGrow: 1 }} />
+
+                          <Button
+                            variant="text"
+                            size="small"
+                            color="primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenModal(prompt);
+                            }}
+                            sx={{
+                              minWidth: 'auto',
+                              padding: '0px 8px',
+                              textTransform: 'none',
+                              fontWeight: 500,
+                              fontSize: '0.8rem',
+                              borderRadius: 0.85,
+                              visibility: 'hidden',
+                              '.MuiCard-root:hover &': {
+                                visibility: 'visible',
+                              },
+                              '&:hover': {
+                                backgroundColor: 'action.hover'
+                              }
+                            }}
+                          >
+                            查看
+                          </Button>
+                        </Box>
                       </Box>
                     </CardContent>
                   </Card>
+
                 </Grid>
               ))}
             </Grid>
