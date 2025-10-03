@@ -1,7 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SearchIcon from "@mui/icons-material/Search";
-import ZoomInIcon from '@mui/icons-material/ZoomIn'; // 新增
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import {
   Box,
   Button,
@@ -277,7 +277,7 @@ const Home: React.FC = () => {
                 >
                   <Card
                     sx={{
-                      height: '100%',
+                      aspectRatio: '3/2',
                       display: 'flex',
                       flexDirection: 'column',
                       transition: 'transform 0.3s, box-shadow 0.3s',
@@ -319,6 +319,7 @@ const Home: React.FC = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         padding: 0,
+                        height: '100%',
                         '&:last-child': {
                           pb: 0,
                         },
@@ -326,7 +327,14 @@ const Home: React.FC = () => {
                     >
 
                       {/* 新增信息显示 */}
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mt: 16, px: 2 }}>
+                      <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        mt: 'auto',
+                        px: 2,
+                        pt: 2
+                      }}>
                         {prompt.tags && renderTags(prompt.tags)}
 
                         {/* 统一行显示点赞、收藏和按钮 */}
