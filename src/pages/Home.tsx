@@ -234,7 +234,7 @@ const Home: React.FC = () => {
         sx={{
           width: '100%',
           maxWidth: 600,
-          my: 2,
+          my: 1,
           position: 'sticky',
           top: 0,
           zIndex: 100,
@@ -249,12 +249,14 @@ const Home: React.FC = () => {
           placeholder="搜索提示词..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Box>
