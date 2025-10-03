@@ -2,14 +2,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SearchIcon from "@mui/icons-material/Search";
 import ZoomInIcon from '@mui/icons-material/ZoomIn'; // 新增
-import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Button,
   Card,
   CardContent,
   Chip,
-  colors,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,6 +18,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import api, { PREVIEW_URL, THUMBNAIL_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
@@ -261,7 +260,7 @@ const Home: React.FC = () => {
       </Box>
 
       {/* 提示词卡片列表 */}
-      <Box sx={{ width: '100%', overflowY: 'auto', scrollbarWidth: 'none' }}>
+      <Box sx={{ width: '100%', overflowY: 'auto', scrollbarWidth: 'none', pt: 0.75 }}>
         {loading ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography color="text.secondary">加载中...</Typography>
@@ -366,6 +365,9 @@ const Home: React.FC = () => {
                             mb: 0,
                             flex: 1,
                             py: 1,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
                           }}
                         >
                           {prompt.title}
