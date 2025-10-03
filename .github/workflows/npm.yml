@@ -24,15 +24,12 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      working-directory: ./prompt-share-frontend
 
     - name: Build project
       run: npm run build
-      working-directory: ./prompt-share-frontend
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
         name: frontend-build
-        path: ./prompt-share-frontend/build
-        # 如果你用 Vite，把上面改成 ./prompt-share-frontend/dist
+        path: ./dist
