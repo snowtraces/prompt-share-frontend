@@ -1,24 +1,28 @@
-import { AppBar, Box, Button, CssBaseline, IconButton, ThemeProvider, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Button, CssBaseline, IconButton, Menu, MenuItem, ThemeProvider, Toolbar, Typography, useMediaQuery } from "@mui/material";
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import FolderIcon from '@mui/icons-material/Folder';
+import ForumIcon from '@mui/icons-material/Forum';
 import HomeIcon from '@mui/icons-material/Home';
+import LanguageIcon from '@mui/icons-material/Language';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
-import ForumIcon from '@mui/icons-material/Forum';
-import FolderIcon from '@mui/icons-material/Folder';
 import MenuIcon from '@mui/icons-material/Menu';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, Link as RouterLink, useNavigate } from "react-router-dom";
+import i18n from '../i18n';
 import MuiCssVars from "../theme/MuiCssVars";
 import { darkTheme, lightTheme } from "../theme/theme";
+import { useTranslation } from 'react-i18next';
 
 
 interface LayoutProps {
   children?: React.ReactNode;
 }
-
 const Layout: React.FC<LayoutProps> = ({ }) => {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const isSmallScreen = useMediaQuery('(max-width:600px)');
@@ -26,6 +30,9 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
     const savedPreference = localStorage.getItem("iconOnlyNav");
     return savedPreference ? JSON.parse(savedPreference) : null;
   });
+
+  const [languageAnchorEl, setLanguageAnchorEl] = useState<null | HTMLElement>(null);
+  const openLanguageMenu = Boolean(languageAnchorEl);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -55,6 +62,28 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
     setIconOnly(newIconOnly);
     localStorage.setItem("iconOnlyNav", JSON.stringify(newIconOnly));
   };
+
+  const handleLanguageClick = (event: React.MouseEvent<HTMLElement>) => {
+    setLanguageAnchorEl(event.currentTarget);
+  };
+
+  const handleLanguageClose = () => {
+    setLanguageAnchorEl(null);
+  };
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
+    handleLanguageClose();
+  };
+
+  // 添加一个useEffect来监听语言变化
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('i18nextLng');
+    if (savedLanguage && i18n.language !== savedLanguage) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, []);
 
   // 统一的菜单项样式
   const menuItemStyle = {
@@ -87,13 +116,13 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
       <MuiCssVars theme={theme} />
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         {/* 左侧导航栏 */}
-        <AppBar position="static" color="primary" sx={{ 
-          boxShadow: 'none', 
+        <AppBar position="static" color="primary" sx={{
+          boxShadow: 'none',
           width: showIconOnly ? 70 : 240,
-          flexShrink: 0 
+          flexShrink: 0
         }}>
-          <Toolbar sx={{ 
-            display: 'flex', 
+          <Toolbar sx={{
+            display: 'flex',
             flexDirection: 'column',
             alignItems: 'stretch',
             height: '100%',
@@ -131,13 +160,13 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                   </Typography>
                 </Box>
               )}
-              
+
               <IconButton
                 onClick={toggleNavMode}
                 color="inherit"
-                sx={{ 
-                  ...(showIconOnly && { 
-                    margin: '0 auto' 
+                sx={{
+                  ...(showIconOnly && {
+                    margin: '0 auto'
                   })
                 }}
                 aria-label={showIconOnly ? "展开菜单" : "收起菜单"}
@@ -146,10 +175,10 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
               </IconButton>
             </Box>
 
-            <Box sx={{ 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               flexDirection: 'column',
-              flexGrow: 1 
+              flexGrow: 1
             }}>
               {showIconOnly ? (
                 <>
@@ -221,13 +250,21 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                 </>
               )}
             </Box>
-            
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'column' 
+
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column'
             }}>
               {showIconOnly ? (
                 <>
+                  <IconButton
+                    onClick={handleLanguageClick}
+                    color="inherit"
+                    sx={iconOnlyMenuItemStyle}
+                    aria-label="语言切换"
+                  >
+                    <LanguageIcon />
+                  </IconButton>
                   <IconButton
                     onClick={handleThemeChange}
                     color="inherit"
@@ -259,6 +296,14 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                 </>
               ) : (
                 <>
+                  <Button
+                    onClick={handleLanguageClick}
+                    color="inherit"
+                    startIcon={<LanguageIcon />}
+                    sx={menuItemStyle}
+                  >
+                    语言/Language
+                  </Button>
                   <Button
                     onClick={handleThemeChange}
                     color="inherit"
@@ -309,6 +354,34 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
         >
           <Outlet /> {/* 用于渲染子路由内容 */}
         </Box>
+
+        {/* 语言选择菜单 */}
+        <Menu
+          anchorEl={languageAnchorEl}
+          open={openLanguageMenu}
+          onClose={handleLanguageClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <MenuItem
+            onClick={() => changeLanguage('zh')}
+            selected={i18n.language === 'zh' || i18n.language.startsWith('zh')}
+          >
+            中文
+          </MenuItem>
+          <MenuItem
+            onClick={() => changeLanguage('en')}
+            selected={i18n.language === 'en' || i18n.language.startsWith('en')}
+          >
+            English
+          </MenuItem>
+        </Menu>
 
         {/* 底部 */}
         {/* <Box
