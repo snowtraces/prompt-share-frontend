@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api, { PREVIEW_URL, THUMBNAIL_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
 
@@ -51,6 +52,7 @@ interface PromptImage {
 
 const Home: React.FC = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [page, setPage] = useState(1);
@@ -246,7 +248,7 @@ const Home: React.FC = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="搜索提示词..."
+          placeholder={t("searchPrompts")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           slotProps={{
@@ -265,7 +267,7 @@ const Home: React.FC = () => {
       <Box sx={{ width: '100%', overflowY: 'auto', scrollbarWidth: 'none', pt: 0.75 }}>
         {loading ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography color="text.secondary">加载中...</Typography>
+            <Typography color="text.secondary">{t("loading")}</Typography>
           </Box>
         ) : prompts.length > 0 ? (
           <>
@@ -409,7 +411,7 @@ const Home: React.FC = () => {
                             mt: 1,
                           }}
                         >
-                          查看
+                          {t("view")}
                         </Button>
                       </Box>
 
@@ -425,19 +427,19 @@ const Home: React.FC = () => {
 
             {loadingMore && (
               <Box sx={{ textAlign: 'center', py: 2 }}>
-                <Typography color="text.secondary">加载中...</Typography>
+                <Typography color="text.secondary">{t("loading")}</Typography>
               </Box>
             )}
 
             {!hasMore && (
               <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Typography color="text.secondary">没有更多内容了</Typography>
+                <Typography color="text.secondary">{t("noMoreContent")}</Typography>
               </Box>
             )}
           </>
         ) : (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography color="text.secondary">没有找到相关提示词</Typography>
+            <Typography color="text.secondary">{t("noResults")}</Typography>
           </Box>
         )
         }
@@ -452,7 +454,7 @@ const Home: React.FC = () => {
       >
         <DialogTitle>
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            提示词详情
+            {t("promptDetails")}
             <IconButton onClick={handleCloseModal}>
               <CloseIcon />
             </IconButton>
@@ -475,12 +477,12 @@ const Home: React.FC = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
                   {selectedPrompt.author_name && (
                     <Typography variant="caption" color="primary" sx={{ whiteSpace: 'nowrap' }}>
-                      作者: {selectedPrompt.author_name}
+                      {t("author")}: {selectedPrompt.author_name}
                     </Typography>
                   )}
                   {selectedPrompt.source_by && (
                     <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
-                      来源: {selectedPrompt.source_url ?
+                      {t("source")}: {selectedPrompt.source_url ?
                         <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</a>
                         : <span>{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</span>
                       }
@@ -508,7 +510,7 @@ const Home: React.FC = () => {
                 </Typography>
                 {/* 悬浮复制按钮，适配深色模式 */}
                 <IconButton
-                  aria-label="复制内容"
+                  aria-label={t("copy")}
                   onClick={() => handleCopyContent(selectedPrompt.content)}
                   sx={{
                     position: 'absolute',
@@ -535,7 +537,7 @@ const Home: React.FC = () => {
               {/* 相关图片更紧凑 */}
               {selectedPrompt.images && selectedPrompt.images.length > 0 && (
                 <Box sx={{ mt: 1, mb: 1 }}>
-                  <Typography variant="subtitle2" gutterBottom sx={{ mb: 0.5 }}>效果图片</Typography>
+                  <Typography variant="subtitle2" gutterBottom sx={{ mb: 0.5 }}>{t("effectImages")}</Typography>
                   <Grid container spacing={1}>
                     {selectedPrompt.images.map(img => (
                       <Grid size={{ xs: 6, sm: 4, md: 3 }} key={img.id}>
@@ -565,6 +567,7 @@ const Home: React.FC = () => {
                                 }}
                                 size="small"
                                 onClick={() => setPreviewImgUrl(PREVIEW_URL + img.file_id)}
+                                aria-label={t("preview")}
                               >
                                 <ZoomInIcon fontSize="small" />
                               </IconButton>
@@ -576,7 +579,7 @@ const Home: React.FC = () => {
                             <CardContent sx={{ p: 0.5 }}>
                               <Typography variant="caption">{img.tags}</Typography>
                               <Typography variant="caption" color="text.secondary">
-                                图片URL未提供
+                                {t("imageURLNotProvided")}
                               </Typography>
                             </CardContent>
                           )}
@@ -605,7 +608,7 @@ const Home: React.FC = () => {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleCloseModal}>关闭</Button>
+          <Button onClick={handleCloseModal}>{t("close")}</Button>
         </DialogActions>
       </Dialog >
 
@@ -619,13 +622,14 @@ const Home: React.FC = () => {
           <IconButton
             onClick={() => setPreviewImgUrl(null)}
             sx={{ position: 'absolute', top: 8, right: 8, color: '#fff', zIndex: 2 }}
+            aria-label={t("close")}
           >
             <CloseIcon />
           </IconButton>
           {previewImgUrl && (
             <img
               src={previewImgUrl}
-              alt="大图预览"
+              alt={t("imagePreview")}
               style={{ maxWidth: '90vw', maxHeight: '80vh', display: 'block', margin: '0' }}
             />
           )}

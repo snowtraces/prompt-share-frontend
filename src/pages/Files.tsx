@@ -21,6 +21,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api, { PREVIEW_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
 // 在文件顶部导入更多图标
@@ -56,6 +57,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function Files() {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [files, setFiles] = useState<LocalFile[]>([]);
   const [page, setPage] = useState(1);
@@ -174,14 +176,14 @@ export default function Files() {
       setFile(null);
       setSnackbar({
         open: true,
-        message: "文件上传成功",
+        message: t('fileUploadSuccess'),
         severity: 'success'
       });
     },
     onError: () => {
       setSnackbar({
         open: true,
-        message: "文件上传失败",
+        message: t('fileUploadFailed'),
         severity: 'error'
       });
     }
@@ -196,7 +198,7 @@ export default function Files() {
       setFiles(prev => prev.filter(f => f.id !== id));
       setSnackbar({
         open: true,
-        message:  "文件删除成功",
+        message: t('fileDeleteSuccess'),
         severity: 'success'
       });
       setDeletingId(null);
@@ -204,7 +206,7 @@ export default function Files() {
     onError: (error: any) => {
       setSnackbar({
         open: true,
-        message: error?.response?.data?.message || "文件删除失败",
+        message: error?.response?.data?.message || t('fileDeleteFailed'),
         severity: 'error'
       });
       setDeletingId(null);
@@ -255,18 +257,18 @@ export default function Files() {
         />
       );
     }
-    return <Typography color="textSecondary">暂不支持该类型文件预览</Typography>;
+    return <Typography color="textSecondary">{t('filePreviewNotSupported')}</Typography>;
   };
 
   return (
     <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box sx={{ width: '100%', maxWidth: 'lg' }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          文件管理
+          {t('fileManagement')}
         </Typography>
 
         <Card sx={{ mb: 3 }}>
-          <CardHeader title="上传文件" />
+          <CardHeader title={t('uploadFile')} />
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Button
@@ -274,7 +276,7 @@ export default function Files() {
                 variant="contained"
                 startIcon={<CloudUploadIcon />}
               >
-                选择文件
+                {t('chooseFile')}
                 <VisuallyHiddenInput
                   type="file"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
@@ -285,11 +287,11 @@ export default function Files() {
                 onClick={() => uploadMutation.mutate()}
                 disabled={!file || uploadMutation.isPending}
               >
-                {uploadMutation.isPending ? <CircularProgress size={24} /> : '上传'}
+                {uploadMutation.isPending ? <CircularProgress size={24} /> : t('upload')}
               </Button>
               {file && (
                 <Typography variant="body2" color="textSecondary">
-                  已选择: {file.name}
+                  {t('selectedFile')}: {file.name}
                 </Typography>
               )}
             </Box>
@@ -342,7 +344,7 @@ export default function Files() {
                           </Typography>
                         </Tooltip>
                         <Box>
-                          <Tooltip title="预览文件">
+                          <Tooltip title={t('preview')}>
                             <IconButton
                               aria-label="preview"
                               size="small"
@@ -351,7 +353,7 @@ export default function Files() {
                               <InsertDriveFileIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title="下载文件">
+                          <Tooltip title={t('download')}>
                             <IconButton
                               aria-label="download"
                               href={`/api/files/download/${f.id}`}
@@ -360,7 +362,7 @@ export default function Files() {
                               <DownloadIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title="删除文件">
+                          <Tooltip title={t('delete')}>
                             <span>
                               <IconButton
                                 aria-label="delete"
@@ -386,7 +388,7 @@ export default function Files() {
                       <Grid container spacing={0.5} sx={{ fontSize: '0.875rem' }}>
                         <Grid size={6}>
                           <Typography variant="body2" color="textSecondary">
-                            标识: {f.id}
+                            {t('fileId')}: {f.id}
                           </Typography>
                         </Grid>
                         <Grid size={6}>
@@ -421,12 +423,12 @@ export default function Files() {
                         </Grid>
                         <Grid size={6}>
                           <Typography variant="body2" color="textSecondary">
-                            大小: {formatFileSize(f.size)}
+                            {t('fileSize')}: {formatFileSize(f.size)}
                           </Typography>
                         </Grid>
                         <Grid size={6}>
                           <Typography variant="body2" color="textSecondary">
-                            时间: {new Date(f.created_at).toLocaleDateString()} {new Date(f.created_at).toLocaleTimeString()}
+                            {t('fileTime')}: {new Date(f.created_at).toLocaleDateString()} {new Date(f.created_at).toLocaleTimeString()}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -447,7 +449,7 @@ export default function Files() {
 
             {!hasMore && (
               <Box sx={{ textAlign: 'center', py: 2 }}>
-                <Typography color="textSecondary" variant="body2">没有更多文件了</Typography>
+                <Typography color="textSecondary" variant="body2">{t('noMoreFiles')}</Typography>
               </Box>
             )}
 
@@ -459,7 +461,7 @@ export default function Files() {
               fullWidth
             >
               <DialogTitle>
-                文件预览：{previewFile?.name}
+                {t('filePreview')}: {previewFile?.name}
               </DialogTitle>
               <DialogContent dividers>
                 {previewFile && renderPreviewContent(previewFile)}
@@ -467,7 +469,7 @@ export default function Files() {
             </Dialog>
           </>
         ) : (
-          <Alert severity="info">暂无文件</Alert>
+          <Alert severity="info">{t('noFiles')}</Alert>
         )}
       </Box>
 

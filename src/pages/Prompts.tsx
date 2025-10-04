@@ -17,6 +17,7 @@ import {
   Typography
 } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api, { PREVIEW_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
 interface Prompt {
@@ -45,7 +46,8 @@ interface PromptImage {
   file_url?: string; // 如果后端提供图片访问URL
 }
 
-const Home: React.FC = () => {
+const Prompts: React.FC = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [page, setPage] = useState(1);
@@ -480,7 +482,7 @@ const Home: React.FC = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="搜索提示词..."
+          placeholder={t('searchPrompts')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -496,7 +498,7 @@ const Home: React.FC = () => {
           color="primary"
           onClick={() => handleOpenModal()}
         >
-          新增
+          {t('upload')}
         </Button>
       </Box>
 
@@ -504,7 +506,7 @@ const Home: React.FC = () => {
       <Box sx={{ width: '100%', overflowY: 'auto', scrollbarWidth: 'none' }}>
         {loading ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography color="text.secondary">加载中...</Typography>
+            <Typography color="text.secondary">{t('loading')}</Typography>
           </Box>
         ) : prompts.length > 0 ? (
           <>
@@ -547,7 +549,7 @@ const Home: React.FC = () => {
                       {/* 新增信息显示 */}
                       {prompt.author_name && (
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                          作者: {prompt.author_name}
+                          {t('author')}: {prompt.author_name}
                         </Typography>
                       )}
 
@@ -575,7 +577,7 @@ const Home: React.FC = () => {
                           color="primary"
                           onClick={() => handleOpenModal(prompt)}
                         >
-                          查看详情
+                          {t('view')}
                         </Button>
                       </Box>
                     </CardContent>
@@ -589,19 +591,19 @@ const Home: React.FC = () => {
 
             {loadingMore && (
               <Box sx={{ textAlign: 'center', py: 2 }}>
-                <Typography color="text.secondary">加载中...</Typography>
+                <Typography color="text.secondary">{t('loading')}</Typography>
               </Box>
             )}
 
             {!hasMore && (
               <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Typography color="text.secondary">没有更多内容了</Typography>
+                <Typography color="text.secondary">{t('noMoreContent')}</Typography>
               </Box>
             )}
           </>
         ) : (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography color="text.secondary">没有找到相关提示词</Typography>
+            <Typography color="text.secondary">{t('noResults')}</Typography>
           </Box>
         )}
       </Box>
@@ -614,7 +616,7 @@ const Home: React.FC = () => {
       >
         <DialogTitle>
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            {isCreateMode ? "新增提示词" : isEditing ? "编辑提示词" : "提示词详情"}
+            {isCreateMode ? t('upload') : isEditing ? t('editPrompt') : t('promptDetails')}
             <IconButton onClick={handleCloseModal}>
               <CloseIcon />
             </IconButton>
@@ -628,7 +630,7 @@ const Home: React.FC = () => {
                 <>
                   <TextField
                     fullWidth
-                    label="标题"
+                    label={t('title')}
                     value={isCreateMode ? newPrompt?.title || '' : editedPrompt?.title || ''}
                     onChange={(e) => handlePromptChange('title', e.target.value)}
                     margin="normal"
@@ -637,7 +639,7 @@ const Home: React.FC = () => {
 
                   <TextField
                     fullWidth
-                    label="内容"
+                    label={t('content')}
                     value={isCreateMode ? newPrompt?.content || '' : editedPrompt?.content || ''}
                     onChange={(e) => handlePromptChange('content', e.target.value)}
                     margin="normal"
@@ -648,7 +650,7 @@ const Home: React.FC = () => {
 
                   <TextField
                     fullWidth
-                    label="标签（用逗号分隔）"
+                    label={t('tagsCommaSeparated')}
                     value={isCreateMode ? newPrompt?.tags || '' : editedPrompt?.tags || ''}
                     onChange={(e) => handlePromptChange('tags', e.target.value)}
                     margin="normal"
@@ -656,7 +658,7 @@ const Home: React.FC = () => {
                   />
                   <TextField
                     fullWidth
-                    label="来源地址"
+                    label={t('sourceURL')}
                     value={isCreateMode ? newPrompt?.source_url || '' : editedPrompt?.source_url || ''}
                     onChange={(e) => handlePromptChange('source_url', e.target.value)}
                     margin="normal"
@@ -665,7 +667,7 @@ const Home: React.FC = () => {
 
                   <TextField
                     fullWidth
-                    label="来源人"
+                    label={t('sourceBy')}
                     value={isCreateMode ? newPrompt?.source_by || '' : editedPrompt?.source_by || ''}
                     onChange={(e) => handlePromptChange('source_by', e.target.value)}
                     margin="normal"
@@ -674,7 +676,7 @@ const Home: React.FC = () => {
 
                   <TextField
                     fullWidth
-                    label="来源标签（用逗号分隔）"
+                    label={t('sourceTagsCommaSeparated')}
                     value={isCreateMode ? newPrompt?.source_tags || '' : editedPrompt?.source_tags || ''}
                     onChange={(e) => handlePromptChange('source_tags', e.target.value)}
                     margin="normal"
@@ -683,13 +685,13 @@ const Home: React.FC = () => {
 
                   {/* 图片上传部分 */}
                   <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6" gutterBottom>相关图片</Typography>
+                    <Typography variant="h6" gutterBottom>{t('relatedImages')}</Typography>
 
                     {/* 现有图片展示 - 仅在编辑模式下显示 */}
                     {!isCreateMode && promptImages.map((img, index) => (
                       <Box key={img.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <TextField
-                          label="图片标签"
+                          label={t('imageTags')}
                           value={img.tags}
                           onChange={(e) => {
                             const updatedImages = [...promptImages];
@@ -717,7 +719,7 @@ const Home: React.FC = () => {
                         component="label"
                         disabled={uploadingImages}
                       >
-                        选择图片
+                        {t('selectImages')}
                         <input
                           type="file"
                           hidden
@@ -729,7 +731,7 @@ const Home: React.FC = () => {
 
                       {uploadingImages && (
                         <Typography variant="body2" sx={{ ml: 2, display: 'inline' }}>
-                          图片上传中...
+                          {t('uploadingImages')}
                         </Typography>
                       )}
                     </Box>
@@ -764,7 +766,7 @@ const Home: React.FC = () => {
                             </IconButton>
                           </Box>
                           <TextField
-                            label="图片标签"
+                            label={t('imageTags')}
                             value={imgItem.tags}
                             onChange={(e) => {
                               const updatedNewImages = [...newImages];
@@ -804,7 +806,7 @@ const Home: React.FC = () => {
                   <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                     {selectedPrompt?.author_name && (
                       <Typography variant="body2" color="text.secondary">
-                        作者: {selectedPrompt.author_name}
+                        {t('author')}: {selectedPrompt.author_name}
                       </Typography>
                     )}
 
@@ -823,13 +825,13 @@ const Home: React.FC = () => {
 
                   {selectedPrompt?.source_url && (
                     <Typography variant="body2" paragraph>
-                      来源地址: <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_url}</a>
+                      {t('sourceURL')}: <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_url}</a>
                     </Typography>
                   )}
 
                   {selectedPrompt?.source_by && (
                     <Typography variant="body2" paragraph>
-                      来源人: {selectedPrompt.source_by}
+                      {t('sourceBy')}: {selectedPrompt.source_by}
                     </Typography>
                   )}
 
@@ -838,7 +840,7 @@ const Home: React.FC = () => {
                   {/* 图片展示 */}
                   {promptImages.length > 0 && (
                     <Box sx={{ mt: 2 }}>
-                      <Typography variant="h6" gutterBottom>相关图片</Typography>
+                      <Typography variant="h6" gutterBottom>{t('relatedImages')}</Typography>
                       <Grid container spacing={2}>
                         {promptImages.map(img => (
                           <Grid size={{ xs: 6, sm: 4, md: 3 }} key={img.file_id}>
@@ -858,7 +860,7 @@ const Home: React.FC = () => {
                                 <CardContent>
                                   <Typography variant="body2">{img.tags}</Typography>
                                   <Typography variant="caption" color="text.secondary">
-                                    图片URL未提供
+                                    {t('imageURLNotProvided')}
                                   </Typography>
                                 </CardContent>
                               )}
@@ -875,23 +877,23 @@ const Home: React.FC = () => {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleCloseModal}>关闭</Button>
+          <Button onClick={handleCloseModal}>{t('close')}</Button>
           {isEditing ? (
             <>
-              <Button onClick={handleEditToggle}>取消</Button>
+              <Button onClick={handleEditToggle}>{t('cancel')}</Button>
               <Button
                 onClick={handleSaveChanges}
                 variant="contained"
                 color="primary"
                 disabled={uploadingImages}
               >
-                {isCreateMode ? "创建" : "保存修改"}
+                {isCreateMode ? t('upload') : t('saveChanges')}
               </Button>
             </>
           ) : (
             <>
               <Button onClick={() => setIsEditing(true)} variant="contained" color="primary">
-                编辑
+                {t('edit')}
               </Button>
             </>
           )}
@@ -901,4 +903,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Prompts;

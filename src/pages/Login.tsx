@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import { useTranslation } from "react-i18next";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -18,6 +19,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -30,10 +32,10 @@ const Login: React.FC = () => {
         localStorage.setItem("token", res.data.data.token);
         navigate("/prompts");
       } else {
-        setError(res.data.message || "登录失败，请检查用户名或密码");
+        setError(res.data.message || t("loginFailed"));
       }
     } catch (err) {
-      setError("登录失败，请检查用户名或密码");
+      setError(t("loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -56,7 +58,7 @@ const Login: React.FC = () => {
       <Card sx={{ minWidth: 300 }}>
         <CardContent sx={{ p: 3 }}>
           <Typography component="h1" variant="h5" align="center" gutterBottom>
-            登录
+            {t("loginTitle")}
           </Typography>
 
           {error && (
@@ -71,7 +73,7 @@ const Login: React.FC = () => {
             required
             fullWidth
             id="username"
-            label="用户名"
+            label={t("username")}
             name="username"
             autoComplete="username"
             autoFocus
@@ -87,7 +89,7 @@ const Login: React.FC = () => {
             required
             fullWidth
             name="password"
-            label="密码"
+            label={t("password")}
             type="password"
             id="password"
             autoComplete="current-password"
@@ -107,7 +109,7 @@ const Login: React.FC = () => {
             disabled={loading}
             size="small"
           >
-            {loading ? <CircularProgress size={20} color="inherit" /> : '登录'}
+            {loading ? <CircularProgress size={20} color="inherit" /> : t("loginButton")}
           </Button>
         </CardContent>
       </Card>

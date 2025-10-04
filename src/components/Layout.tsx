@@ -9,12 +9,12 @@ import LanguageIcon from '@mui/icons-material/Language';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Outlet, Link as RouterLink, useNavigate } from "react-router-dom";
 import i18n from '../i18n';
 import MuiCssVars from "../theme/MuiCssVars";
 import { darkTheme, lightTheme } from "../theme/theme";
-import { useTranslation } from 'react-i18next';
 
 
 interface LayoutProps {
@@ -71,20 +71,13 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
     setLanguageAnchorEl(null);
   };
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    localStorage.setItem('i18nextLng', lng);
-    handleLanguageClose();
-  };
-
-  // 添加一个useEffect来监听语言变化
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('i18nextLng');
-    if (savedLanguage && i18n.language !== savedLanguage) {
-      i18n.changeLanguage(savedLanguage);
-    }
-  }, []);
-
+ const changeLanguage = (lng: string) => {
+  i18n.changeLanguage(lng).then(() => {
+    localStorage.setItem('i18nextLng', lng); // 保存选择
+  });
+  handleLanguageClose();
+};
+  
   // 统一的菜单项样式
   const menuItemStyle = {
     justifyContent: 'flex-start',
@@ -169,7 +162,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                     margin: '0 auto'
                   })
                 }}
-                aria-label={showIconOnly ? "展开菜单" : "收起菜单"}
+                aria-label={showIconOnly ? t('expandMenu') : t('collapseMenu')}
               >
                 <MenuIcon />
               </IconButton>
@@ -187,7 +180,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                     to="/"
                     color="inherit"
                     sx={iconOnlyMenuItemStyle}
-                    aria-label="首页"
+                    aria-label={t('home')}
                   >
                     <HomeIcon />
                   </IconButton>
@@ -198,7 +191,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                         to="/prompts"
                         color="inherit"
                         sx={iconOnlyMenuItemStyle}
-                        aria-label="提示词"
+                        aria-label={t('prompts')}
                       >
                         <ForumIcon />
                       </IconButton>
@@ -207,7 +200,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                         to="/files"
                         color="inherit"
                         sx={iconOnlyMenuItemStyle}
-                        aria-label="文件管理"
+                        aria-label={t('files')}
                       >
                         <FolderIcon />
                       </IconButton>
@@ -223,7 +216,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                     startIcon={<HomeIcon />}
                     sx={menuItemStyle}
                   >
-                    首页
+                    {t('home')}
                   </Button>
                   {token && (
                     <>
@@ -234,7 +227,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                         startIcon={<ForumIcon />}
                         sx={menuItemStyle}
                       >
-                        提示词
+                        {t('prompts')}
                       </Button>
                       <Button
                         component={RouterLink}
@@ -243,7 +236,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                         startIcon={<FolderIcon />}
                         sx={menuItemStyle}
                       >
-                        文件管理
+                        {t('files')}
                       </Button>
                     </>
                   )}
@@ -269,7 +262,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                     onClick={handleThemeChange}
                     color="inherit"
                     sx={iconOnlyMenuItemStyle}
-                    aria-label={mode === "light" ? '暗色主题' : '亮色主题'}
+                    aria-label={mode === "light" ? t('darkTheme') : t('lightTheme')}
                   >
                     {mode === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
                   </IconButton>
@@ -279,7 +272,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                       to="/login"
                       color="inherit"
                       sx={iconOnlyMenuItemStyle}
-                      aria-label="登录"
+                      aria-label={t('login')}
                     >
                       <LoginIcon />
                     </IconButton>
@@ -287,7 +280,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                     <IconButton
                       color="inherit"
                       sx={iconOnlyMenuItemStyle}
-                      aria-label="登出"
+                      aria-label={t('logout')}
                       onClick={handleLogout}
                     >
                       <LogoutIcon />
@@ -310,7 +303,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                     startIcon={mode === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
                     sx={menuItemStyle}
                   >
-                    {mode === "light" ? '暗色主题' : '亮色主题'}
+                    {mode === "light" ? t('darkTheme') : t('lightTheme')}
                   </Button>
                   {!token ? (
                     <Button
@@ -320,7 +313,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                       startIcon={<LoginIcon />}
                       sx={menuItemStyle}
                     >
-                      登录
+                      {t('login')}
                     </Button>
                   ) : (
                     <Button
@@ -329,7 +322,7 @@ const Layout: React.FC<LayoutProps> = ({ }) => {
                       onClick={handleLogout}
                       sx={menuItemStyle}
                     >
-                      登出
+                      {t('logout')}
                     </Button>
                   )}
                 </>
