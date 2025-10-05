@@ -446,170 +446,165 @@ const Home: React.FC = () => {
       </Box >
 
       {/* 弹窗组件 */}
-      < Dialog
+      <Dialog
         open={isModalOpen}
         onClose={handleCloseModal}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            {t("promptDetails")}
-            <IconButton onClick={handleCloseModal}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-
-        <DialogContent dividers sx={{ p: 2 }}>
-          {selectedPrompt && (
-            <Box sx={{ py: 0.5 }}>
-              {/* 标题独占一行 */}
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 1 }}>
-                {selectedPrompt.title}
-              </Typography>
-
-              {/* tags 左侧，作者/来源右侧，全部同一行展示 */}
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, gap: 1 }}>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  {selectedPrompt.tags && renderTags(selectedPrompt.tags)}
+        <>
+          <DialogContent dividers sx={{ p: 1.5 }}>
+            {selectedPrompt && (
+              <Box sx={{ py: 0.5 }}>
+                {/* 标题独占一行 */}
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
+                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 0, mt: 0 }}>
+                    {selectedPrompt.title}
+                  </Typography>
+                  <IconButton onClick={handleCloseModal} size="small" sx={{ mt: -0.5 }} aria-label={t("close")}>
+                    <CloseIcon />
+                  </IconButton>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
-                  {selectedPrompt.author_name && (
-                    <Typography variant="caption" color="primary" sx={{ whiteSpace: 'nowrap' }}>
-                      {t("author")}: {selectedPrompt.author_name}
-                    </Typography>
-                  )}
-                  {selectedPrompt.source_by && (
-                    <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
-                      {t("source")}: {selectedPrompt.source_url ?
-                        <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</a>
-                        : <span>{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</span>
-                      }
-                    </Typography>
-                  )}
-                </Box>
-              </Box>
 
-              {/* 主内容更紧凑 */}
-              <Box sx={{ position: 'relative', display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-                <Typography
-                  variant="body2"
-                  paragraph
-                  sx={{
-                    whiteSpace: 'pre-wrap',
-                    backgroundColor: 'action.hover',
-                    p: 1.5,
-                    borderRadius: 1,
-                    fontSize: '0.98rem',
-                    flex: 1,
-                    mb: 0
-                  }}
-                >
-                  {selectedPrompt.content}
-                </Typography>
-                {/* 悬浮复制按钮，适配深色模式 */}
-                <IconButton
-                  aria-label={t("copy")}
-                  onClick={() => handleCopyContent(selectedPrompt.content)}
-                  sx={{
-                    position: 'absolute',
-                    right: 8,
-                    bottom: 8,
-                    background: theme.palette.mode === 'dark'
-                      ? theme.palette.background.paper
-                      : 'rgba(255,255,255,0.85)',
-                    color: theme.palette.text.primary,
-                    boxShadow: 1,
-                    '&:hover': {
+                {/* tags 左侧，作者/来源右侧，全部同一行展示 */}
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, gap: 1 }}>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    {selectedPrompt.tags && renderTags(selectedPrompt.tags)}
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
+                    {selectedPrompt.author_name && (
+                      <Typography variant="caption" color="primary" sx={{ whiteSpace: 'nowrap' }}>
+                        {t("author")}: {selectedPrompt.author_name}
+                      </Typography>
+                    )}
+                    {selectedPrompt.source_by && (
+                      <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+                        {t("source")}: {selectedPrompt.source_url ?
+                          <a href={selectedPrompt.source_url} target="_blank" rel="noopener noreferrer">{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</a>
+                          : <span>{selectedPrompt.source_by} {selectedPrompt.source_tags && '(' + selectedPrompt.source_tags + ')'}</span>
+                        }
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+
+                {/* 主内容更紧凑 */}
+                <Box sx={{ position: 'relative', display: 'flex', alignItems: 'flex-start', mb: 1 }}>
+                  <Typography
+                    variant="body2"
+                    paragraph
+                    sx={{
+                      whiteSpace: 'pre-wrap',
+                      backgroundColor: 'action.hover',
+                      p: 1.5,
+                      borderRadius: 1,
+                      fontSize: '0.98rem',
+                      flex: 1,
+                      mb: 0
+                    }}
+                  >
+                    {selectedPrompt.content}
+                  </Typography>
+                  {/* 悬浮复制按钮，适配深色模式 */}
+                  <IconButton
+                    aria-label={t("copy")}
+                    onClick={() => handleCopyContent(selectedPrompt.content)}
+                    sx={{
+                      position: 'absolute',
+                      right: 8,
+                      bottom: 8,
                       background: theme.palette.mode === 'dark'
-                        ? theme.palette.action.hover
-                        : 'rgba(230,230,230,1)'
-                    },
-                    zIndex: 2
-                  }}
-                  size="small"
-                >
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </Box>
-
-              {/* 相关图片更紧凑 */}
-              {selectedPrompt.images && selectedPrompt.images.length > 0 && (
-                <Box sx={{ mt: 1, mb: 1 }}>
-                  <Typography variant="subtitle2" gutterBottom sx={{ mb: 0.5 }}>{t("effectImages")}</Typography>
-                  <Grid container spacing={1}>
-                    {selectedPrompt.images.map(img => (
-                      <Grid size={{ xs: 6, sm: 4, md: 3 }} key={img.id}>
-                        <Card sx={{ position: 'relative' }}>
-                          {img.file_url ? (
-                            <>
-                              <img
-                                src={THUMBNAIL_URL + img.file_id}
-                                alt={img.tags || "Prompt image"}
-                                style={{
-                                  height: 110,
-                                  width: '100%',
-                                  objectFit: 'cover',
-                                  borderRadius: 3,
-                                  display: 'block'
-                                }}
-                              />
-                              <IconButton
-                                sx={{
-                                  position: 'absolute',
-                                  right: 4,
-                                  bottom: 4,
-                                  background: 'rgba(0,0,0,0.4)',
-                                  color: '#fff',
-                                  '&:hover': { background: 'rgba(0,0,0,0.6)' },
-                                  zIndex: 2
-                                }}
-                                size="small"
-                                onClick={() => setPreviewImgUrl(PREVIEW_URL + img.file_id)}
-                                aria-label={t("preview")}
-                              >
-                                <ZoomInIcon fontSize="small" />
-                              </IconButton>
-                              <CardContent sx={{ p: 0.5, pb: '4px !important' }}>
-                                <Typography variant="caption" noWrap sx={{ pb: 0 }}>{img.tags}</Typography>
-                              </CardContent>
-                            </>
-                          ) : (
-                            <CardContent sx={{ p: 0.5 }}>
-                              <Typography variant="caption">{img.tags}</Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                {t("imageURLNotProvided")}
-                              </Typography>
-                            </CardContent>
-                          )}
-                        </Card>
-                      </Grid>
-                    ))}
-                  </Grid>
+                        ? theme.palette.background.paper
+                        : 'rgba(255,255,255,0.85)',
+                      color: theme.palette.text.primary,
+                      boxShadow: 1,
+                      '&:hover': {
+                        background: theme.palette.mode === 'dark'
+                          ? theme.palette.action.hover
+                          : 'rgba(230,230,230,1)'
+                      },
+                      zIndex: 2
+                    }}
+                    size="small"
+                  >
+                    <ContentCopyIcon fontSize="small" />
+                  </IconButton>
                 </Box>
-              )}
 
-              {/* 点赞/收藏等操作，底部居中展示 */}
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 1 }}>
-                {selectedPrompt.like_count !== undefined && (
-                  <Typography variant="caption" color="text.secondary">
-                    👍 {selectedPrompt.like_count}
-                  </Typography>
+                {/* 相关图片更紧凑 */}
+                {selectedPrompt.images && selectedPrompt.images.length > 0 && (
+                  <Box sx={{ mt: 1, mb: 1 }}>
+                    <Typography variant="subtitle2" gutterBottom sx={{ mb: 0.5 }}>{t("effectImages")}</Typography>
+                    <Grid container spacing={1}>
+                      {selectedPrompt.images.map(img => (
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={img.id}>
+                          <Card sx={{ position: 'relative' }}>
+                            {img.file_url ? (
+                              <>
+                                <img
+                                  src={THUMBNAIL_URL + img.file_id}
+                                  alt={img.tags || "Prompt image"}
+                                  style={{
+                                    height: 110,
+                                    width: '100%',
+                                    objectFit: 'cover',
+                                    borderRadius: 3,
+                                    display: 'block'
+                                  }}
+                                />
+                                <IconButton
+                                  sx={{
+                                    position: 'absolute',
+                                    right: 4,
+                                    bottom: 4,
+                                    background: 'rgba(0,0,0,0.4)',
+                                    color: '#fff',
+                                    '&:hover': { background: 'rgba(0,0,0,0.6)' },
+                                    zIndex: 2
+                                  }}
+                                  size="small"
+                                  onClick={() => setPreviewImgUrl(PREVIEW_URL + img.file_id)}
+                                  aria-label={t("preview")}
+                                >
+                                  <ZoomInIcon fontSize="small" />
+                                </IconButton>
+                                <CardContent sx={{ p: 0.5, pb: '4px !important' }}>
+                                  <Typography variant="caption" noWrap sx={{ pb: 0 }}>{img.tags}</Typography>
+                                </CardContent>
+                              </>
+                            ) : (
+                              <CardContent sx={{ p: 0.5 }}>
+                                <Typography variant="caption">{img.tags}</Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  {t("imageURLNotProvided")}
+                                </Typography>
+                              </CardContent>
+                            )}
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
                 )}
-                {selectedPrompt.fav_count !== undefined && (
-                  <Typography variant="caption" color="text.secondary">
-                    💖 {selectedPrompt.fav_count}
-                  </Typography>
-                )}
+
+                {/* 点赞/收藏等操作，底部居中展示 */}
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 2, mb: 0 }}>
+                  {selectedPrompt.like_count !== undefined && (
+                    <Typography variant="caption" color="text.secondary">
+                      👍 {selectedPrompt.like_count}
+                    </Typography>
+                  )}
+                  {selectedPrompt.fav_count !== undefined && (
+                    <Typography variant="caption" color="text.secondary">
+                      💖 {selectedPrompt.fav_count}
+                    </Typography>
+                  )}
+                </Box>
+
               </Box>
-            </Box>
-          )}
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleCloseModal}>{t("close")}</Button>
-        </DialogActions>
+            )}
+          </DialogContent>
+        </>
       </Dialog >
 
       {/* 大图预览弹窗 */}
