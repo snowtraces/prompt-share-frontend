@@ -512,7 +512,7 @@ const Home: React.FC = () => {
                   {/* 悬浮复制按钮，适配深色模式 */}
                   <IconButton
                     aria-label={t("copy")}
-                    onClick={() => handleCopyContent(selectedPrompt.content)}
+                    onClick={() => handleCopyContent(i18n.language === 'zh' ? selectedPrompt.content : (selectedPrompt.content_en || selectedPrompt.content))}
                     sx={{
                       position: 'absolute',
                       right: 8,
