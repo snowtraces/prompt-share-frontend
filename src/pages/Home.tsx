@@ -9,9 +9,7 @@ import {
   CardContent,
   Chip,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogTitle,
   Grid,
   IconButton,
   InputAdornment,
@@ -23,12 +21,16 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import api, { PREVIEW_URL, THUMBNAIL_URL } from "../api";
 import type { ApiResponse, PaginatedResponse } from "../types";
+import i18n from '../i18n';
 
 interface Prompt {
   id: number;
   title: string;
+  title_en?: string;
   content: string;
+  content_en?: string;
   tags?: string;
+  tags_en?: string;
   author_name?: string;
   like_count?: number;
   fav_count?: number;
@@ -188,7 +190,9 @@ const Home: React.FC = () => {
   }, [hasMore, loadPrompts]);
 
   // 处理标签显示
-  const renderTags = (tagsString?: string) => {
+  const renderTags = (prompt?: Prompt) => {
+    if (!prompt) return null;
+    const tagsString = i18n.language === 'zh' ? prompt.tags : (prompt.tags_en || prompt.tags);
     if (!tagsString) return null;
     const tags = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag);
     return (
@@ -337,7 +341,7 @@ const Home: React.FC = () => {
                         px: 2,
                         pt: 2
                       }}>
-                        {prompt.tags && renderTags(prompt.tags)}
+                        {prompt.tags && renderTags(prompt)}
 
                         {/* 统一行显示点赞、收藏和按钮 */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
@@ -382,7 +386,7 @@ const Home: React.FC = () => {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {prompt.title}
+                          {i18n.language === 'zh' ? prompt.title : (prompt.title_en || prompt.title)}
                         </Typography>
                         <Button
                           variant="text"
@@ -459,7 +463,7 @@ const Home: React.FC = () => {
                 {/* 标题独占一行 */}
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
                   <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, mb: 0, mt: 0 }}>
-                    {selectedPrompt.title}
+                    {i18n.language === 'zh' ? selectedPrompt.title : (selectedPrompt.title_en || selectedPrompt.title)}
                   </Typography>
                   <IconButton onClick={handleCloseModal} size="small" sx={{ mt: -0.5 }} aria-label={t("close")}>
                     <CloseIcon />
@@ -469,7 +473,7 @@ const Home: React.FC = () => {
                 {/* tags 左侧，作者/来源右侧，全部同一行展示 */}
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, gap: 1 }}>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    {selectedPrompt.tags && renderTags(selectedPrompt.tags)}
+                    {selectedPrompt.tags && renderTags(selectedPrompt)}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0 }}>
                     {selectedPrompt.author_name && (
@@ -503,7 +507,7 @@ const Home: React.FC = () => {
                       mb: 0
                     }}
                   >
-                    {selectedPrompt.content}
+                     {i18n.language === 'zh' ? selectedPrompt.content : (selectedPrompt.content_en || selectedPrompt.content)}
                   </Typography>
                   {/* 悬浮复制按钮，适配深色模式 */}
                   <IconButton

@@ -14,7 +14,7 @@ export default {
     "download": "下载",
     "cancel": "取消",
     "confirm": "确认",
-    
+
     // 首页相关
     "searchPrompts": "搜索提示词...",
     "promptDetails": "提示词详情",
@@ -23,7 +23,7 @@ export default {
     "source": "来源",
     "imageURLNotProvided": "图片URL未提供",
     "imagePreview": "大图预览",
-    
+
     // 导航栏
     "home": "首页",
     "prompts": "提示词",
@@ -34,14 +34,14 @@ export default {
     "collapseMenu": "收起菜单",
     "darkTheme": "暗色主题",
     "lightTheme": "亮色主题",
-    
+
     // 登录页面
     "loginTitle": "登录",
     "username": "用户名",
     "password": "密码",
     "loginButton": "登录",
     "loginFailed": "登录失败，请检查用户名或密码",
-    
+
     // 注册页面
     "registerTitle": "注册",
     "registerButton": "注册",
@@ -49,7 +49,7 @@ export default {
     "registerFailed": "注册失败，用户名可能已存在",
     "alreadyHaveAccount": "已有账号？",
     "goToLogin": "去登录",
-    
+
     // 文件管理页面
     "fileManagement": "文件管理",
     "uploadFile": "上传文件",
@@ -66,8 +66,11 @@ export default {
     "fileSize": "大小",
     "fileTime": "时间",
     "filePreviewNotSupported": "暂不支持该类型文件预览",
-    
+
     // 提示词管理页面
+    "create": "新建",
+    "edit": "编辑",
+    "saveChanges": "保存修改",
     "promptManagement": "提示词管理",
     "createPrompt": "创建提示词",
     "editPrompt": "编辑提示词",

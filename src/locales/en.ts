@@ -68,6 +68,9 @@ export default {
     "filePreviewNotSupported": "File preview not supported",
     
     // 提示词管理页面
+    "create": "Create",
+    "edit": "Edit",
+    "saveChanges": "Save Changes",
     "promptManagement": "Prompt Management",
     "createPrompt": "Create Prompt",
     "editPrompt": "Edit Prompt",

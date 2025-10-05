@@ -498,7 +498,7 @@ const Prompts: React.FC = () => {
           color="primary"
           onClick={() => handleOpenModal()}
         >
-          {t('upload')}
+          {t('create')}
         </Button>
       </Box>
 
@@ -887,7 +887,7 @@ const Prompts: React.FC = () => {
                 color="primary"
                 disabled={uploadingImages}
               >
-                {isCreateMode ? t('upload') : t('saveChanges')}
+                {isCreateMode ? t('create') : t('saveChanges')}
               </Button>
             </>
           ) : (
