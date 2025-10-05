@@ -55,6 +55,7 @@ export default {
     "uploadFile": "Upload File",
     "chooseFile": "Choose File",
     "selectedFile": "Selected",
+    "uploadingImages": "Uploading images...",
     "fileUploadSuccess": "File uploaded successfully",
     "fileUploadFailed": "File upload failed",
     "fileDeleteSuccess": "File deleted successfully",
@@ -88,6 +89,8 @@ export default {
     "promptDeleteSuccess": "Prompt deleted successfully",
     "promptDeleteFailed": "Failed to delete prompt",
     "addImage": "Add Image",
-    "imageTags": "Image Tags"
+    "imageTags": "Image Tags",
+    "relatedImages": "Related Images",
+    "selectImages": "Select Images",
   }
 };

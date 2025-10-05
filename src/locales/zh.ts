@@ -55,6 +55,7 @@ export default {
     "uploadFile": "上传文件",
     "chooseFile": "选择文件",
     "selectedFile": "已选择",
+    "uploadingImages": "图片上传中...",
     "fileUploadSuccess": "文件上传成功",
     "fileUploadFailed": "文件上传失败",
     "fileDeleteSuccess": "文件删除成功",
@@ -88,6 +89,8 @@ export default {
     "promptDeleteSuccess": "提示词删除成功",
     "promptDeleteFailed": "提示词删除失败",
     "addImage": "添加图片",
-    "imageTags": "图片标签"
+    "imageTags": "图片标签",
+    "relatedImages": "相关图片",
+    "selectImages": "选择图片",
   }
 };
