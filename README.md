@@ -71,3 +71,5 @@ export default defineConfig([
 npm i --save-dev @types/node
 
 npm install --save-dev rollup-plugin-visualizer
+
+npm install --save-dev @types/react-helmet

@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Prompts from "./pages/Prompts";
 import Files from "./pages/Files";
+import PromptDetail from './pages/PromptDetail';
 
 const router = createBrowserRouter(
   [
@@ -18,6 +19,7 @@ const router = createBrowserRouter(
         { path: "/login", element: <Login /> },
         { path: "/prompts", element: <Prompts /> },
         { path: "/files", element: <Files /> },
+        { path: "/prompt/:id", element: <PromptDetail /> },
       ],
     },
   ],

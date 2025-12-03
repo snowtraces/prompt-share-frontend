@@ -2,6 +2,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SearchIcon from "@mui/icons-material/Search";
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import { Helmet } from 'react-helmet';
+// 在 Home.tsx 文件顶部导入 useNavigate
 import {
   Box,
   Button,
@@ -19,9 +21,10 @@ import {
 import { useTheme } from "@mui/material/styles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import api, { PREVIEW_URL, THUMBNAIL_URL } from "../api";
-import type { ApiResponse, PaginatedResponse } from "../types";
 import i18n from '../i18n';
+import type { ApiResponse, PaginatedResponse } from "../types";
 
 interface Prompt {
   id: number;
@@ -75,6 +78,8 @@ const Home: React.FC = () => {
   const [previewImgUrl, setPreviewImgUrl] = useState<string | null>(null);
 
   const PROMPTS_PER_PAGE = 9;
+
+  const navigate = useNavigate();
 
   // 获取提示词列表
   const fetchPrompts = useCallback(async (pageNum: number, searchQuery: string = "") => {
@@ -210,9 +215,8 @@ const Home: React.FC = () => {
     );
   };
 
-  const handleOpenModal = async (prompt: Prompt) => {
-    setSelectedPrompt(prompt);
-    setIsModalOpen(true);
+  const handleViewPrompt = (promptId: number) => {
+    navigate(`/prompt/${promptId}`);
   };
 
   const handleCloseModal = () => {
@@ -235,6 +239,13 @@ const Home: React.FC = () => {
         width: '100%',
         overflowY: 'hidden'
       }}>
+
+      <Helmet>
+        <title>Prompt Share</title>
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+      </Helmet>
+
       {/* 固定搜索框 */}
       <Box
         sx={{
@@ -394,7 +405,7 @@ const Home: React.FC = () => {
                           color="primary"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleOpenModal(prompt);
+                            handleViewPrompt(prompt.id);
                           }}
                           sx={{
                             minWidth: 'auto',
@@ -507,7 +518,7 @@ const Home: React.FC = () => {
                       mb: 0
                     }}
                   >
-                     {i18n.language === 'zh' ? selectedPrompt.content : (selectedPrompt.content_en || selectedPrompt.content)}
+                    {i18n.language === 'zh' ? selectedPrompt.content : (selectedPrompt.content_en || selectedPrompt.content)}
                   </Typography>
                   {/* 悬浮复制按钮，适配深色模式 */}
                   <IconButton
